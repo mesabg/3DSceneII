@@ -1,17 +1,195 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Init">
+      <UniqueIdentifier>{ee7ef4ef-e5c4-47a7-a242-56924202b766}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Main Objects">
+      <UniqueIdentifier>{61436366-b37b-4adb-a598-9c3b94332e2e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Model">
+      <UniqueIdentifier>{de88cd12-5464-4690-b66e-7ad3a9b47ac6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Render Interface">
+      <UniqueIdentifier>{4e79dcef-11cd-4509-8f24-881a997efc81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Secondary Objects">
+      <UniqueIdentifier>{437fc75c-beca-4d97-b9a3-690c95024699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{9ec15334-9db7-488e-b912-f421c9339411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Fragment">
+      <UniqueIdentifier>{96892b00-2b35-4fac-876c-c2f1fe58e901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Vertex">
+      <UniqueIdentifier>{569caed8-f310-4def-aebb-8f82f6ef9742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main Objects\Header Files">
+      <UniqueIdentifier>{4df8bdec-c994-4b72-8873-7800e3442aea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main Objects\Source Files">
+      <UniqueIdentifier>{cdad1d9a-0c4d-46d6-a4af-a93fd920eec9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model\Header Files">
+      <UniqueIdentifier>{088c256d-a626-4214-94a1-d898169ed109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model\Source Files">
+      <UniqueIdentifier>{74bb0f7e-8831-40a2-bdbe-dc5edef52ef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Secondary Objects\Header Files">
+      <UniqueIdentifier>{dcfe75d8-45be-4550-88a7-c7c4e972c7fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Secondary Objects\Source Files">
+      <UniqueIdentifier>{c47f5082-2429-4c3e-bea7-40d3815188a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render Interface\Header Files">
+      <UniqueIdentifier>{1936d5e5-56d9-45b3-aeb8-db420c9f7e7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render Interface\Source Files">
+      <UniqueIdentifier>{69c6567f-fd2f-4de4-b4d9-2d28662f5350}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\headers\Main.h">
+      <Filter>Init</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\CGLSLProgram.h">
+      <Filter>Main Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\GUI.h">
+      <Filter>Main Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Player.h">
+      <Filter>Main Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\SideBar.h">
+      <Filter>Main Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\SkyBox.h">
+      <Filter>Main Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Stage.h">
+      <Filter>Main Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Terrain.h">
+      <Filter>Main Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Model.h">
+      <Filter>Model\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\OBJ.h">
+      <Filter>Model\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Reader.h">
+      <Filter>Model\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\ConcreteRenderController.h">
+      <Filter>Render Interface\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\RenderInterface.h">
+      <Filter>Render Interface\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Animation.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\BoundingBox.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Camera.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Light.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\LightProperties.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\MousePicker.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Projection.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Routes.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Texture.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\Transformation.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\cpp\Main.cpp">
+      <Filter>Init</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\CGLSLProgram.cpp">
+      <Filter>Main Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\GUI.cpp">
+      <Filter>Main Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Player.cpp">
+      <Filter>Main Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\SideBar.cpp">
+      <Filter>Main Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\SkyBox.cpp">
+      <Filter>Main Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Stage.cpp">
+      <Filter>Main Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Terrain.cpp">
+      <Filter>Main Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Model.cpp">
+      <Filter>Model\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\OBJ.cpp">
+      <Filter>Model\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Reader.cpp">
+      <Filter>Model\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\ConcreteRenderController.cpp">
+      <Filter>Render Interface\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\RenderInterface.cpp">
+      <Filter>Render Interface\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Animation.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\BoundingBox.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Camera.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Light.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\LightProperties.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\MousePicker.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Projection.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Routes.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Texture.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\Transformation.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
