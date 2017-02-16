@@ -174,10 +174,10 @@ void SideBar::bindModel() {
 	TwAddVarRW(this->modelPropertiesBar, "MatSpecularReflectances", TW_TYPE_COLOR3F, this->model->getMaterialLight()->getSpecular(), "group='Material Colors' label='Specular Reflactances' opened=true help='Change the material specular reflectances.' ");
 
 	//-- Light Properties
-	TwAddVarRW(this->modelPropertiesBar, "MatShininess", TW_TYPE_FLOAT, this->model->getMaterialLightProperties()->getShininess(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Shininess factor' help='Change the shininess factor.'");
-	TwAddVarRW(this->modelPropertiesBar, "MatRoughness", TW_TYPE_FLOAT, this->model->getMaterialLightProperties()->getRoughness(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Roughness factor' help='Change the roughness factor.'");
-	TwAddVarRW(this->modelPropertiesBar, "MatFresnel", TW_TYPE_FLOAT, this->model->getMaterialLightProperties()->getFresnel(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Fresnel factor' help='Change the fresnel factor.'");
-	TwAddVarRW(this->modelPropertiesBar, "MatAlbedo", TW_TYPE_FLOAT, this->model->getMaterialLightProperties()->getAlbedo(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Albedo factor' help='Change the albedo factor.'");
+	TwAddVarRW(this->modelPropertiesBar, "MatShininess", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getShininess(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Shininess factor' help='Change the shininess factor.'");
+	TwAddVarRW(this->modelPropertiesBar, "MatRoughness", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getRoughness(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Roughness factor' help='Change the roughness factor.'");
+	TwAddVarRW(this->modelPropertiesBar, "MatFresnel", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getFresnel(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Fresnel factor' help='Change the fresnel factor.'");
+	TwAddVarRW(this->modelPropertiesBar, "MatAlbedo", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getAlbedo(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Albedo factor' help='Change the albedo factor.'");
 
 	//-- Activate textures
 	TwAddVarRW(this->modelPropertiesBar, "TextureSwitch", TW_TYPE_BOOLCPP, this->model->getTexture()->isActive(), "group='Texture Switch' label='Turn On/Off' opened=true help='Turn On/Off the texture.' ");

@@ -9,8 +9,8 @@ using glm::tvec3;
 
 class Light {
 private:
-	vec3 position;	/*Position of the light*/
-	vec3 ambient;	/*Values of the refraction of the light*/
+	vec3 position;	//-- Position of the light
+	vec3 ambient;	//-- Values of the refraction of the light
 	vec3 diffuse;
 	vec3 specular;
 	vec3 direction;

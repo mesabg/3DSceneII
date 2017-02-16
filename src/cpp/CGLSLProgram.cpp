@@ -5,18 +5,7 @@
 
 using namespace std;
 
-
-CGLSLProgram::CGLSLProgram(RenderController * renderController) :RenderColleague(renderController) {
-	m_vIdShader[FRAGMENT] = 0;
-	m_vIdShader[GEOMETRY] = 0;
-	m_vIdShader[TESSELATION] = 0;
-	m_mapVarShader.clear();
-	m_mapSubroutines.clear();
-}
-
-
-CGLSLProgram::CGLSLProgram()
-{
+CGLSLProgram::CGLSLProgram(){
 	m_vIdShader[VERTEX] = 0;
 	m_vIdShader[FRAGMENT] = 0;
 	m_vIdShader[GEOMETRY] = 0;
@@ -69,10 +58,6 @@ void CGLSLProgram::recompileShader(std::string strFileName, SHADERTYPE typeShade
 
 GLuint CGLSLProgram::getProgramID() {
 	return this->m_uIdProgram;
-}
-
-void CGLSLProgram::Notify(string message, void * data) {
-
 }
 
 void CGLSLProgram::loadShader(std::string strFileName, SHADERTYPE typeShader)

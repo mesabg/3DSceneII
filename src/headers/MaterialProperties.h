@@ -2,7 +2,7 @@
 #ifndef __LIGHT_PROPERTIES_H__
 #define __LIGHT_PROPERTIES_H__
 
-class LightProperties {
+class MaterialProperties {
 private:
 	float shininess;
 	float fresnel;
@@ -10,9 +10,9 @@ private:
 	float albedo;
 
 public:
-	LightProperties();
-	LightProperties(float shininess, float fresnel, float roughness, float albedo);
-	~LightProperties();
+	MaterialProperties();
+	MaterialProperties(float shininess, float fresnel, float roughness, float albedo);
+	~MaterialProperties();
 
 	//-- Getters
 	float* getShininess();

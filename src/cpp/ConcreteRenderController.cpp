@@ -82,7 +82,9 @@ void ConcreteRenderController::render() {
 	//-- SkyBox
 
 	//-- Render the stage
+	this->illuminationProgram->enable();
 	this->stage->render();
+	this->illuminationProgram->disable();
 
 	//-- Update Side Bar
 	this->sideBar->update();
@@ -130,13 +132,15 @@ void ConcreteRenderController::initGLSLPrograms() {
 		this->illuminationPrograms->at((*programRoute)->at("name"))->create_link();
 	}*/
 
-	this->illuminationProgram = new CGLSLProgram(this);
-	this->illuminationProgram->loadShader("../src/shaders/byFragmentLightning.vert", CGLSLProgram::VERTEX);
-	this->illuminationProgram->loadShader("../src/shaders/byFragmentLightning.frag", CGLSLProgram::FRAGMENT);
+	this->illuminationProgram = new CGLSLProgram();
+	this->illuminationProgram->loadShader("../src/shaders/Vertex1.vert", CGLSLProgram::VERTEX);
+	this->illuminationProgram->loadShader("../src/shaders/Vertex2.vert", CGLSLProgram::VERTEX);
+	this->illuminationProgram->loadShader("../src/shaders/BlinnPhong.frag", CGLSLProgram::FRAGMENT);
 	this->illuminationProgram->create_link();
 
 
-	this->illuminationProgram2 = new CGLSLProgram(this);
+
+	this->illuminationProgram2 = new CGLSLProgram();
 	this->illuminationProgram2->loadShader("../src/shaders/byVertexLightning.vert", CGLSLProgram::VERTEX);
 	this->illuminationProgram2->loadShader("../src/shaders/byVertexLightning.frag", CGLSLProgram::FRAGMENT);
 	this->illuminationProgram2->create_link();
@@ -153,9 +157,7 @@ double ConcreteRenderController::getFrameTimeSeconds(){
 
 int ConcreteRenderController::infinity() {
 	while (!glfwWindowShouldClose(this->gui->getWindow())) {
-		this->illuminationProgram->enable();
 		this->render();
-		this->illuminationProgram->disable();
 		glfwSwapBuffers(this->gui->getWindow());
 		glfwPollEvents();
 	}

@@ -2,19 +2,23 @@
 #ifndef __MODEL_H_
 #define __MODEL_H_
 
-/*Global Includes*/
+//-- Global Includes
 #include <string>
 #include <sstream>
 #include <vector>
 
-/*Class Includes*/
+//-- Class Includes
+#include <CGLSLProgram.h>
+/*
+#include <Camera.h>*/
+#include <Projection.h>
 #include <BoundingBox.h>
 #include <Transformation.h>
 #include <Animation.h>
 #include <Texture.h>
 #include <Routes.h>
 #include <Light.h>
-#include <LightProperties.h>
+#include <MaterialProperties.h>
 
 using glm::vec2;
 using glm::tvec2;
@@ -34,7 +38,11 @@ protected:
 	GLuint glVBO_indexes_size;
 	vec3 minVec, maxVec;
 
+	//-- Routes
 	Routes* routes;
+
+	//-- Shading Program
+	CGLSLProgram* shaderProgram;
 
 	//-- Arrays to load a model
 	vector<GLfloat*> vertexes;
@@ -54,8 +62,7 @@ protected:
 
 	//-- Light material values
 	Light* material;
-	LightProperties* lightProperties;
-	float shininess;
+	MaterialProperties* materialProperties;
 
 	//-- Uniforms IDs
 	vector<GLint> *ID;
@@ -63,11 +70,15 @@ protected:
 	//-- Animation
 	Animation* animation;
 
+	//-- Some functions
+	void bindData(Projection* projection, Camera* camera, vector<Light*> *globalLights);
+	void drawElements();
+
 public:
 	Model();
-	Model(Routes* routes, Transformation* transformation, Light* light);
+	Model(Routes* routes);
 	~Model();
-	void render(GLuint shader_id);
+	void render(Projection* projection, Camera* camera, vector<Light*> *globalLights);
 
 	//-- Getters
 	vector<GLfloat> getGLVBO();
@@ -75,7 +86,7 @@ public:
 	BoundingBox* getBoundingBox();
 	Texture* getTexture();
 	Light* getMaterialLight();
-	LightProperties* getMaterialLightProperties();
+	MaterialProperties* getMaterialProperties();
 	GLuint getGLVBO_dir();
 	GLuint getGLVBO_indexes_dir();
 	vector<GLuint> getGLVBO_indexes();
@@ -89,13 +100,15 @@ public:
 	tvec2<bool>* getLightningType();
 	bool* getLightningTypeX_frag();
 	bool* getLightningTypeY_vert();
-	float getShininess();
 	Animation* getAnimation();
 
 	//-- Setters
 	void setTransformation(Transformation* transformation);
 	void setTexture(Texture* texture);
 	void setAnimation(Animation* animation);
+	void setMaterialProperties(MaterialProperties* materialProperties);
+	void setLight(Light* light);
+	void setShader(CGLSLProgram* shader);
 
 	//-- Inherit
 	void Inherit(Model* model);

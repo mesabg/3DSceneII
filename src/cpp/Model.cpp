@@ -1,6 +1,158 @@
 #include <Model.h>
 #include <iostream>
 
+void Model::bindData(Projection* projection, Camera* camera, vector<Light*> *globalLights){
+	//-- Bind Lights
+	unsigned int i = 0;
+	for (Light* light : *(globalLights)) {
+		if (*(light->active())) {
+			glUniform3f(
+				glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light["+ std::to_string(i) +"].ambient").c_str()),
+				light->getAmbient()->r, 
+				light->getAmbient()->g, 
+				light->getAmbient()->b);
+
+			glUniform3f(
+				glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].diffuse").c_str()),
+				light->getDiffuse()->r, 
+				light->getDiffuse()->g, 
+				light->getDiffuse()->b);
+
+			glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].specular").c_str()),
+				light->getSpecular()->r,
+				light->getSpecular()->g,
+				light->getSpecular()->b);
+		}
+		else {
+			glUniform3f(
+				glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].ambient").c_str()),
+				0.0f,
+				0.0f,
+				0.0f);
+
+			glUniform3f(
+				glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].diffuse").c_str()),
+				0.0f,
+				0.0f,
+				0.0f);
+
+			glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].specular").c_str()),
+				0.0f,
+				0.0f,
+				0.0f);
+		}
+
+		glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].type").c_str()),
+			(GLfloat)light->getType()->x, 
+			(GLfloat)light->getType()->y, 
+			(GLfloat)light->getType()->z);
+
+		glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].position").c_str()),
+			light->getPosition()->x, 
+			light->getPosition()->y, 
+			light->getPosition()->z);
+
+		glUniform1f(glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].constant").c_str()),
+			light->getAttenuation()->x);
+
+		glUniform1f(glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].linear").c_str()),
+			light->getAttenuation()->y);
+
+		glUniform1f(glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].quadratic").c_str()),
+			light->getAttenuation()->z);
+
+		glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].direction").c_str()),
+			light->getDirection()->x,
+			light->getDirection()->y,
+			light->getDirection()->z);
+
+		glUniform1f(glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].exponent").c_str()),
+			*(light->getSpotExp()));
+
+		glUniform1f(glGetUniformLocation(this->shaderProgram->getProgramID(), ("u_light[" + std::to_string(i) + "].cosCutOff").c_str()),
+			*(light->getSpotCosCutOff()));
+		i++;
+	}
+
+	//-- Bind General Attributes
+	glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_camera_position"),
+		camera->getPosition().x,
+		camera->getPosition().y,
+		camera->getPosition().z);
+
+	glUniformMatrix4fv(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_view_matrix"), 1, GL_FALSE, &(camera->getMatrix())[0][0]);
+
+	glUniformMatrix4fv(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_projection_matrix"), 1, GL_FALSE, &(projection->getMatrix())[0][0]);
+
+	glUniformMatrix4fv(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_normal_matrix"), 1, GL_FALSE, &(glm::inverse(glm::transpose(camera->getMatrix())))[0][0]);
+
+	//-- Bind Material Attributes
+	glUniformMatrix4fv(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_model_matrix"), 1, GL_FALSE, &(this->transformation->getTransformMatrix())[0][0]);
+
+	glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.ambient"),
+		this->material->getAmbient()->r, 
+		this->material->getAmbient()->g, 
+		this->material->getAmbient()->b);
+
+	glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.diffuse"),
+		this->material->getDiffuse()->r,
+		this->material->getDiffuse()->g,
+		this->material->getDiffuse()->b);
+
+	glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.specular"),
+		this->material->getSpecular()->r,
+		this->material->getSpecular()->g,
+		this->material->getSpecular()->b);
+
+	glUniform1f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.shininess"),
+		*(this->materialProperties->getShininess()));
+
+	glUniform1f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.roughness"),
+		*(this->materialProperties->getRoughness()));
+
+	glUniform1f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.fresnel"),
+		*(this->materialProperties->getFresnel()));
+
+	glUniform1f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.albedo"),
+		*(this->materialProperties->getAlbedo()));
+
+	//-- Something else
+	glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_textureIsActive"), 
+		(GLint)*(this->texture->isActive()));
+
+	glUniform4f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_shadingBitMap"),
+		this->shading.x,
+		this->shading.y,
+		this->shading.z,
+		this->shading.w);
+}
+
+void Model::drawElements(){
+	// -- Binding Texture
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, this->texture->getID());
+	glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_texture"), 0);
+
+	// -- VBO Data
+	glBindBuffer(GL_ARRAY_BUFFER, this->glVBO_dir);
+	// -- Vertex 
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), 0);
+	// -- Normals
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	// -- Texture Coord
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+	// -- Drawing
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->glVBO_indexes_dir);
+
+	glDrawElements(GL_TRIANGLES, this->glVBO_indexes_size, GL_UNSIGNED_INT, (void*)0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(0);
+}
+
 Model::Model() {
 	//this->glVBO = (GLfloat*)malloc(sizeof(GLfloat));
 
@@ -12,11 +164,10 @@ Model::Model() {
 
 	/*Init Material Colors*/
 	this->material = new Light();
-	this->lightProperties = new LightProperties(0.5f, 0.5f, 0.5f, 0.5f);
-	this->shininess = 4.0f;
+	this->materialProperties = new MaterialProperties(0.5f, 0.5f, 0.5f, 0.5f);
 }
 
-Model::Model(Routes* routes, Transformation* transformation, Light* light) {
+Model::Model(Routes* routes) {
 	//-- Init data structures
 	this->routes = routes;
 
@@ -24,16 +175,15 @@ Model::Model(Routes* routes, Transformation* transformation, Light* light) {
 	this->ID = new vector<GLint>(12, 0);
 
 	//-- Init Tranformation
-	this->transformation = transformation;
+	this->transformation = NULL;
 
 	//-- Init Bounding Box
 	this->boundingBox = new BoundingBox();
 
 	//-- Init Material Colors
-	this->material = light;
-		//new Light(vec3(0.0f, 0.0f, 0.0f), vec3(0.5f, 0.3f, 0.2f), vec3(0.2f, 0.1f, 0.2f), vec3(0.25f, 0.0f, 0.2f));
-	this->lightProperties = new LightProperties(0.1f, 100.0f, 0.1f, 0.2f);
-	this->shininess = 10.0f;
+	this->material = NULL;
+
+	this->materialProperties = new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f);
 	this->shading = vec4(true, false, false, false);
 	this->lightningType = vec2(true, false);
 	this->animation = NULL;
@@ -43,72 +193,13 @@ Model::~Model() {
 
 }
 
-void Model::render(GLuint shader_id) {
-
-	//-- Animate
+void Model::render(Projection* projection, Camera* camera, vector<Light*> *globalLights) {
+	this->shaderProgram->enable();
 	if (this->animation) this->animation->animate();
-
-	//-- Move Bounding Box
 	this->boundingBox->move(this->transformation->getTransformMatrix());
-
-
-	//-- Bind Uniforms
-	this->ID->at(0) = glGetUniformLocation(shader_id, "u_matAmbientReflectances");
-	glUniform3f(this->ID->at(0), this->material->getAmbient()->r, this->material->getAmbient()->g, this->material->getAmbient()->b);
-
-	this->ID->at(1) = glGetUniformLocation(shader_id, "u_matDiffuseReflectances");
-	glUniform3f(this->ID->at(1), this->material->getDiffuse()->r, this->material->getDiffuse()->g, this->material->getDiffuse()->b);
-
-	this->ID->at(2) = glGetUniformLocation(shader_id, "u_matSpecularReflectances");
-	glUniform3f(this->ID->at(2), this->material->getSpecular()->r, this->material->getSpecular()->g, this->material->getSpecular()->b);
-
-	this->ID->at(3) = glGetUniformLocation(shader_id, "u_matShininess");
-	glUniform1f(this->ID->at(3), this->shininess);
-
-	this->ID->at(4) = glGetUniformLocation(shader_id, "u_shininess");
-	glUniform1f(this->ID->at(4), *(this->lightProperties->getShininess()));
-
-	this->ID->at(5) = glGetUniformLocation(shader_id, "u_roughness");
-	glUniform1f(this->ID->at(5), *(this->lightProperties->getRoughness()));
-
-	this->ID->at(6) = glGetUniformLocation(shader_id, "u_fresnel");
-	glUniform1f(this->ID->at(6), *(this->lightProperties->getFresnel()));
-
-	this->ID->at(7) = glGetUniformLocation(shader_id, "u_albedo");
-	glUniform1f(this->ID->at(7), *(this->lightProperties->getAlbedo()));
-
-	this->ID->at(8) = glGetUniformLocation(shader_id, "u_textureIsActive");
-	glUniform1i(this->ID->at(8), (GLint)*(this->texture->isActive()));
-
-	this->ID->at(9) = glGetUniformLocation(shader_id, "u_shadingBitMap");
-	glUniform4f(this->ID->at(9), this->shading.x, this->shading.y, this->shading.z, this->shading.w);
-
-	this->ID->at(10) = glGetUniformLocation(shader_id, "u_modelMat");
-	glUniformMatrix4fv(this->ID->at(10), 1, GL_FALSE, &(this->transformation->getTransformMatrix())[0][0]);
-
-	// -- Binding Texture
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, this->texture->getID());
-	glUniform1i(glGetUniformLocation(shader_id, "u_texture"), 0);
-
-	// -- VBO Data
-	glBindBuffer(GL_ARRAY_BUFFER, this->glVBO_dir);
-		// -- Vertex 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), 0);
-		// -- Normals
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
-		// -- Texture Coord
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-
-	// -- Drawing
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->glVBO_indexes_dir);
-
-	glDrawElements(GL_TRIANGLES, this->glVBO_indexes_size, GL_UNSIGNED_INT, (void*)0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(0);
+	this->bindData(projection, camera, globalLights);
+	this->drawElements();
+	this->shaderProgram->disable();
 }
 
 vector<GLfloat> Model::getGLVBO() {
@@ -131,8 +222,8 @@ Light * Model::getMaterialLight(){
 	return this->material;
 }
 
-LightProperties * Model::getMaterialLightProperties(){
-	return this->lightProperties;
+MaterialProperties * Model::getMaterialProperties(){
+	return this->materialProperties;
 }
 
 GLuint Model::getGLVBO_dir() {
@@ -187,10 +278,6 @@ bool * Model::getLightningTypeY_vert() {
 	return &(this->lightningType.y);
 }
 
-float Model::getShininess() {
-	return this->shininess;
-}
-
 Animation * Model::getAnimation(){
 	return this->animation;
 }
@@ -207,6 +294,18 @@ void Model::setAnimation(Animation* animation){
 	this->animation = animation;
 }
 
+void Model::setMaterialProperties(MaterialProperties * materialProperties){
+	this->materialProperties = materialProperties;
+}
+
+void Model::setLight(Light * light){
+	this->material = light;
+}
+
+void Model::setShader(CGLSLProgram * shader){
+	this->shaderProgram = shader;
+}
+
 void Model::Inherit(Model * model) {
 	/*Copy All the values*/
 	this->routes = model->getRoutes();
@@ -218,7 +317,6 @@ void Model::Inherit(Model * model) {
 	this->glVBO_indexes_dir = model->getGLVBO_indexes_dir();
 	this->glVBO_indexes = model->getGLVBO_indexes();
 	this->glVBO_indexes_size = model->getGLVBO_indexes_size();
-	this->shininess = model->getShininess();
 }
 
 void Model::initGLDataBinding(int index) {

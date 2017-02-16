@@ -16,7 +16,7 @@
 /*Class Includes*/
 #include <MousePicker.h>
 #include <Transformation.h>
-#include <LightProperties.h>
+#include <MaterialProperties.h>
 
 /*Using Spaces*/
 using std::string;

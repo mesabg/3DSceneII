@@ -133,9 +133,10 @@
     <ClInclude Include="..\src\headers\ConcreteRenderController.h" />
     <ClInclude Include="..\src\headers\GUI.h" />
     <ClInclude Include="..\src\headers\Light.h" />
-    <ClInclude Include="..\src\headers\LightProperties.h" />
+    <ClInclude Include="..\src\headers\MaterialProperties.h" />
     <ClInclude Include="..\src\headers\Main.h" />
     <ClInclude Include="..\src\headers\Model.h" />
+    <ClInclude Include="..\src\headers\ModelCollection.h" />
     <ClInclude Include="..\src\headers\MousePicker.h" />
     <ClInclude Include="..\src\headers\OBJ.h" />
     <ClInclude Include="..\src\headers\Player.h" />
@@ -158,9 +159,10 @@
     <ClCompile Include="..\src\cpp\ConcreteRenderController.cpp" />
     <ClCompile Include="..\src\cpp\GUI.cpp" />
     <ClCompile Include="..\src\cpp\Light.cpp" />
-    <ClCompile Include="..\src\cpp\LightProperties.cpp" />
+    <ClCompile Include="..\src\cpp\MaterialProperties.cpp" />
     <ClCompile Include="..\src\cpp\Main.cpp" />
     <ClCompile Include="..\src\cpp\Model.cpp" />
+    <ClCompile Include="..\src\cpp\ModelCollection.cpp" />
     <ClCompile Include="..\src\cpp\MousePicker.cpp" />
     <ClCompile Include="..\src\cpp\OBJ.cpp" />
     <ClCompile Include="..\src\cpp\Player.cpp" />
@@ -174,6 +176,15 @@
     <ClCompile Include="..\src\cpp\Terrain.cpp" />
     <ClCompile Include="..\src\cpp\Texture.cpp" />
     <ClCompile Include="..\src\cpp\Transformation.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\shaders\BlinnPhong.frag" />
+    <None Include="..\src\shaders\byFragmentLightning.frag" />
+    <None Include="..\src\shaders\byFragmentLightning.vert" />
+    <None Include="..\src\shaders\Skybox.frag" />
+    <None Include="..\src\shaders\Skybox.vert" />
+    <None Include="..\src\shaders\Vertex1.vert" />
+    <None Include="..\src\shaders\Vertex2.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

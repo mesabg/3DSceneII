@@ -2,21 +2,24 @@
 #ifndef _CGLSL_
 #define _CGLSL_
 
-#include <RenderInterface.h>
+//-- Global Includes
+#include <glew\glew.h>
+#include <glfw3.h>
+#include <string>
+#include <vector>
+#include <map>
 
 using std::vector;
 using std::string;
 
 /// For now, just 1 vertex's type can be attach to the program
 /// In order add more than 1 vertex's type to the program, the shaders should be named (eg. "shader1", "shader2" & so on)
-class CGLSLProgram : public RenderColleague
-{
+class CGLSLProgram {
 public:
 	enum SHADERTYPE { VERTEX = 0, FRAGMENT, GEOMETRY, TESSELATION };
 
 	GLuint m_uIdProgram;		//id of the program
 	GLuint m_vIdShader[4];	//ids of the loaded shaders; the 4th is empty always
-	CGLSLProgram(RenderController* renderController);
 	CGLSLProgram();
 	~CGLSLProgram();
 
@@ -36,9 +39,6 @@ public:
 	std::map<std::string, GLint> m_mapSubroutines;
 	void recompileShader(std::string strFileName, SHADERTYPE typeShader);
 	GLuint getProgramID();
-
-	/*Get message*/
-	void Notify(string message, void* data);
 
 private:
 	std::map<std::string, GLint> m_mapVarShader;

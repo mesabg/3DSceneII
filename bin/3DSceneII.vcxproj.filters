@@ -102,9 +102,6 @@
     <ClInclude Include="..\src\headers\Light.h">
       <Filter>Secondary Objects\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\headers\LightProperties.h">
-      <Filter>Secondary Objects\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\headers\MousePicker.h">
       <Filter>Secondary Objects\Header Files</Filter>
     </ClInclude>
@@ -119,6 +116,12 @@
     </ClInclude>
     <ClInclude Include="..\src\headers\Transformation.h">
       <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\MaterialProperties.h">
+      <Filter>Secondary Objects\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\headers\ModelCollection.h">
+      <Filter>Model\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -173,9 +176,6 @@
     <ClCompile Include="..\src\cpp\Light.cpp">
       <Filter>Secondary Objects\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\cpp\LightProperties.cpp">
-      <Filter>Secondary Objects\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\cpp\MousePicker.cpp">
       <Filter>Secondary Objects\Source Files</Filter>
     </ClCompile>
@@ -191,5 +191,34 @@
     <ClCompile Include="..\src\cpp\Transformation.cpp">
       <Filter>Secondary Objects\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\cpp\MaterialProperties.cpp">
+      <Filter>Secondary Objects\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\ModelCollection.cpp">
+      <Filter>Model\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\shaders\byFragmentLightning.frag">
+      <Filter>Shaders\Fragment</Filter>
+    </None>
+    <None Include="..\src\shaders\byFragmentLightning.vert">
+      <Filter>Shaders\Vertex</Filter>
+    </None>
+    <None Include="..\src\shaders\Vertex1.vert">
+      <Filter>Shaders\Vertex</Filter>
+    </None>
+    <None Include="..\src\shaders\Vertex2.vert">
+      <Filter>Shaders\Vertex</Filter>
+    </None>
+    <None Include="..\src\shaders\BlinnPhong.frag">
+      <Filter>Shaders\Fragment</Filter>
+    </None>
+    <None Include="..\src\shaders\Skybox.frag">
+      <Filter>Shaders\Fragment</Filter>
+    </None>
+    <None Include="..\src\shaders\Skybox.vert">
+      <Filter>Shaders\Vertex</Filter>
+    </None>
   </ItemGroup>
 </Project>
