@@ -17,7 +17,7 @@ class OBJ : public Model
 private:
 	int index;
 public:
-	OBJ(Routes* routes, Transformation* transformation, Light* light);
+	OBJ(Routes* routes);
 	~OBJ();
 	void agregarFace(vector<string> Faces);
 };

@@ -28,6 +28,10 @@ mat4 Projection::getMatrix() {
 	return this->projection;
 }
 
+mat4 * Projection::getProjection(){
+	return &this->projection;
+}
+
 float Projection::getFieldOfView() {
 	return this->fieldOfView;
 }

@@ -179,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\shaders\BlinnPhong.frag" />
+    <None Include="..\src\shaders\BlinnPhong.vert" />
     <None Include="..\src\shaders\byFragmentLightning.frag" />
     <None Include="..\src\shaders\byFragmentLightning.vert" />
     <None Include="..\src\shaders\Skybox.frag" />

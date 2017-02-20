@@ -17,19 +17,12 @@ ConcreteRenderController::ConcreteRenderController(const float width, const floa
 	this->gui = GUI::Instance(this, (int)width, (int)height);
 	this->sideBar = SideBar::Instance(this);
 
-	//-- Initializing Shading Programs
-	this->illuminationPrograms = new map<string, CGLSLProgram*>();
-	this->illuminationProgram = NULL;
-	this->illuminationProgram2 = NULL;
-	this->initGLSLPrograms();
-
 	//-- Initializing Stage
 	this->stage = Stage::Instance(this);
+	//this->stage->initGLSLPrograms();
 	this->stage->Notify("InitSideBar", NULL);
 	this->stage->Notify("width/height", (void*)(new float[2]{ width, height }));
 	this->stage->Notify("init VBOs", NULL);
-	this->stage->Notify("shader id", (void*)this->illuminationProgram->getProgramID());
-	this->stage->Notify("shader id2", (void*)this->illuminationProgram2->getProgramID());
 
 	//-- Reshape screen
 	this->gui->reshape(this->gui->getWindow(), (int)width, (int)height);
@@ -79,12 +72,8 @@ void ConcreteRenderController::render() {
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//-- SkyBox
-
 	//-- Render the stage
-	this->illuminationProgram->enable();
 	this->stage->render();
-	this->illuminationProgram->disable();
 
 	//-- Update Side Bar
 	this->sideBar->update();
@@ -95,55 +84,7 @@ void ConcreteRenderController::render() {
 }
 
 void ConcreteRenderController::initGLSLPrograms() {
-	/*Graphic Card Info*/
-	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
-	std::cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-	std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
-	std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
 
-	/*Structure to initialize*/
-	/*vector< map<string, string>* > *routes = new vector< map<string, string>* >({
-		new map<string, string>({ { "name", "Phong" }, { "vertex", "../src/shaders/Phong.vert" }, { "fragment", "../src/shaders/Phong.frag" } } ),
-		new map<string, string>({ { "name", "Blinn-Phong" },{ "vertex", "../src/shaders/Phong.vert" }, { "fragment", "../src/shaders/Phong.frag" } }),
-		new map<string, string>({ { "name", "Oren-Nayar" },{ "vertex", "../src/shaders/Phong.vert" }, { "fragment", "../src/shaders/Phong.frag" } }),
-		new map<string, string>({ { "name", "Cook-Torrance" },{ "vertex", "../src/shaders/Phong.vert" }, { "fragment", "../src/shaders/Phong.frag" } })
-	});*/
-
-	/*Initialize Shader Programs*/
-	/*std::vector< map<string, string>* >::iterator programRoute;
-	for (programRoute = routes->begin(); programRoute != routes->end(); programRoute++){
-		std::cout << "\nLoading " << (*programRoute)->at("name") << " shading program...\n";
-
-		this->illuminationPrograms->insert_or_assign(
-			(*programRoute)->at("name"),
-			new CGLSLProgram(this)
-		);
-
-		this->illuminationPrograms->at( (*programRoute)->at("name") )->loadShader(
-			(*programRoute)->at("vertex"),
-			CGLSLProgram::VERTEX
-		);
-
-		this->illuminationPrograms->at((*programRoute)->at("name"))->loadShader(
-			(*programRoute)->at("fragment"),
-			CGLSLProgram::FRAGMENT
-		);
-
-		this->illuminationPrograms->at((*programRoute)->at("name"))->create_link();
-	}*/
-
-	this->illuminationProgram = new CGLSLProgram();
-	this->illuminationProgram->loadShader("../src/shaders/Vertex1.vert", CGLSLProgram::VERTEX);
-	this->illuminationProgram->loadShader("../src/shaders/Vertex2.vert", CGLSLProgram::VERTEX);
-	this->illuminationProgram->loadShader("../src/shaders/BlinnPhong.frag", CGLSLProgram::FRAGMENT);
-	this->illuminationProgram->create_link();
-
-
-
-	this->illuminationProgram2 = new CGLSLProgram();
-	this->illuminationProgram2->loadShader("../src/shaders/byVertexLightning.vert", CGLSLProgram::VERTEX);
-	this->illuminationProgram2->loadShader("../src/shaders/byVertexLightning.frag", CGLSLProgram::FRAGMENT);
-	this->illuminationProgram2->create_link();
 }
 
 

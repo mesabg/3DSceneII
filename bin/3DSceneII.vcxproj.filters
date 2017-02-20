@@ -220,5 +220,8 @@
     <None Include="..\src\shaders\Skybox.vert">
       <Filter>Shaders\Vertex</Filter>
     </None>
+    <None Include="..\src\shaders\BlinnPhong.vert">
+      <Filter>Shaders\Vertex</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -26,18 +26,23 @@ extern unsigned int amountOfLights;
 class ModelCollection{
 protected:
 	vector<Model*> entities;
+	vector<Light*> lightSet;
 public:
 	ModelCollection(
 		vector<Routes*> routes, 
 		vector<Transformation*> tranformations, 
 		vector<Light*> lights, 
-		vector<MaterialProperties*> materialProperties,
-		vector<CGLSLProgram*> shaders);
+		vector<MaterialProperties*> materialProperties);
 
 	~ModelCollection();
 
 	//-- Methods
-	void render(Projection* projection, Camera* camera);
+	void render(Projection* projection, Camera* camera, vector<Light*>* lights, CGLSLProgram* shader);
+	void initVBOs();
+
+	//-- Getter
+	Model* getEntity(const unsigned int index);
+	vector<Light*> *getLightSet();
 };
 
 #endif

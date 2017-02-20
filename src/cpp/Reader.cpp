@@ -4,7 +4,7 @@
 void Reader::processNode(aiNode * node, const aiScene * scene){
 	for (GLuint i = 0; i < node->mNumMeshes; i++){
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-
+		cout << mesh->mNumVertices << endl;
 		for (GLuint i = 0; i < mesh->mNumVertices; i++) {
 			if (i == 0) {
 				minVec.x = maxVec.x = mesh->mVertices[i].x;
@@ -42,9 +42,10 @@ void Reader::processNode(aiNode * node, const aiScene * scene){
 	}
 
 	for (GLuint i = 0; i < node->mNumChildren; i++)
-		this->processNode(node->mChildren[i], scene);
+		if (node->mChildren[i] != NULL)
+			this->processNode(node->mChildren[i], scene);
 }
-/*
+
 void Reader::processMaterial(aiMaterial * material){
 	aiString material_name;
 	material->Get(AI_MATKEY_NAME, material_name);
@@ -69,61 +70,55 @@ void Reader::processMaterial(aiMaterial * material){
 		material->Get(AI_MATKEY_SHININESS, shininess);
 
 		//-- Set material properties
-
-		mater->Ambient = QVector3D(amb.r, amb.g, amb.b);
-		mater->Diffuse = QVector3D(dif.r, dif.g, dif.b);
-		mater->Specular = QVector3D(spec.r, spec.g, spec.b);
-		mater->Shininess = shine;
-		
-		mater->Ambient *= .2;
-		if (mater->Shininess == 0.0)
-			mater->Shininess = 30;
+		this->material->setAmbient(glm::vec3(ambient.r, ambient.g, ambient.b));
+		this->material->setDiffuse(glm::vec3(diffuse.r, diffuse.g, diffuse.b));
+		this->material->setSpecular(glm::vec3(specular.r, specular.g, specular.b));
+		this->materialProperties->setShininess(shininess);
 	}
 }
 
 void Reader::processMesh(aiMesh * mesh){
-	newMesh->name = mesh->mName.length != 0 ? mesh->mName.C_Str() : "";
-	newMesh->indexOffset = m_indices.size();
-	unsigned int indexCountBefore = m_indices.size();
-	int vertindexoffset = m_vertices.size() / 3;
-
-	//-- Get Vertices
-	if (mesh->mNumVertices > 0)
-		for (unsigned int i = 0; i < mesh->mNumVertices; ++i){
-			aiVector3D &vec = mesh->mVertices[i];
-			m_vertices.push_back(vec.x);
-			m_vertices.push_back(vec.y);
-			m_vertices.push_back(vec.z);
+	cout << mesh->mNumVertices << " vertices\n";
+	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+		//cout << mesh->mVertices[i].x << " " << mesh->mVertices[i].y << " " << mesh->mVertices[i].z << endl;
+		if (i == 0) {
+			this->minVec.x = this->maxVec.x = mesh->mVertices[i].x;
+			this->minVec.y = this->maxVec.y = mesh->mVertices[i].y;
+			this->minVec.z = this->maxVec.z = mesh->mVertices[i].z;
 		}
+		else {
+			// -- Min
+			this->minVec.x = mesh->mVertices[i].x < this->minVec.x ? mesh->mVertices[i].x : this->minVec.x;
+			this->minVec.y = mesh->mVertices[i].y < this->minVec.y ? mesh->mVertices[i].y : this->minVec.y;
+			this->minVec.z = mesh->mVertices[i].z < this->minVec.z ? mesh->mVertices[i].z : this->minVec.z;
 
-	//-- Get Normals
-	if (mesh->HasNormals())
-		for (unsigned int i = 0; i < mesh->mNumVertices; ++i){
-			aiVector3D &vec = mesh->mNormals[i];
-			m_normals.push_back(vec.x);
-			m_normals.push_back(vec.y);
-			m_normals.push_back(vec.z);
+			// -- Max
+			this->maxVec.x = mesh->mVertices[i].x > this->maxVec.x ? mesh->mVertices[i].x : this->maxVec.x;
+			this->maxVec.y = mesh->mVertices[i].y > this->maxVec.y ? mesh->mVertices[i].y : this->maxVec.y;
+			this->maxVec.z = mesh->mVertices[i].z > this->maxVec.z ? mesh->mVertices[i].z : this->maxVec.z;
 		}
-
-	//-- Get mesh indexes
-	for (unsigned int t = 0; t < mesh->mNumFaces; ++t){
-		aiFace* face = &mesh->mFaces[t];
-		if (face->mNumIndices != 3){
-			cout << "Warning: Mesh face with not exactly 3 indices, ignoring this primitive.\n";
-			continue;
+		this->glVBO.push_back(mesh->mVertices[i].x);
+		this->glVBO.push_back(mesh->mVertices[i].y);
+		this->glVBO.push_back(mesh->mVertices[i].z);
+		this->glVBO.push_back(mesh->mNormals[i].x);
+		this->glVBO.push_back(mesh->mNormals[i].y);
+		this->glVBO.push_back(mesh->mNormals[i].z);
+		if (mesh->mTextureCoords[0]) {
+			this->glVBO.push_back(mesh->mTextureCoords[0][i].x);
+			this->glVBO.push_back(mesh->mTextureCoords[0][i].y);
+			if (mesh->mTextureCoords[0][i].z) this->glVBO.push_back(mesh->mTextureCoords[0][i].z);
+			else this->glVBO.push_back(0.0f);
 		}
-
-		m_indices.push_back(face->mIndices[0] + vertindexoffset);
-		m_indices.push_back(face->mIndices[1] + vertindexoffset);
-		m_indices.push_back(face->mIndices[2] + vertindexoffset);
 	}
-
-	newMesh->indexCount = m_indices.size() - indexCountBefore;
-	newMesh->material = m_materials.at(mesh->mMaterialIndex);
+	for (GLuint i = 0; i < mesh->mNumFaces; i++) {
+		aiFace face = mesh->mFaces[i];
+		for (GLuint j = 0; j < face.mNumIndices; j++)
+			this->glVBO_indexes.push_back(face.mIndices[j]);
+	}
 }
 
 void Reader::processNode(const aiScene * scene, aiNode * node){
-	newNode.name = node->mName.length != 0 ? node->mName.C_Str() : "";
+	/*newNode.name = node->mName.length != 0 ? node->mName.C_Str() : "";
 
 	newNode.transformation = QMatrix4x4(node->mTransformation[0]);
 
@@ -138,7 +133,7 @@ void Reader::processNode(const aiScene * scene, aiNode * node){
 	{
 		newNode.nodes.push_back(Node());
 		processNode(scene, node->mChildren[ich], parentNode, newNode.nodes[ich]);
-	}
+	}*/
 }
 
 void Reader::readMaterials(const aiScene *scene){
@@ -148,31 +143,27 @@ void Reader::readMaterials(const aiScene *scene){
 }
 
 void Reader::readMeshes(const aiScene * scene){
-	if (scene->HasMeshes())
+	if (scene->HasMeshes()) {
+		cout << scene->mNumMeshes << endl;
 		for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 			processMesh(scene->mMeshes[i]);
+	}
 	else cout << "Error: No meshes found\n";
 }
 
 void Reader::readNodes(const aiScene * scene){
-	if (scene->mRootNode != NULL){
-		Node *rootNode = new Node;
+	/*if (scene->mRootNode != NULL){
+		Node *rootNode = new Node();
 		processNode(scene, scene->mRootNode, 0, *rootNode);
 		m_rootNode.reset(rootNode);
 	}
-	else cout << "Error loading model\n";
+	else cout << "Error loading model\n";*/
 }
-*/
+
 Reader::Reader(Routes* routes) :Model(routes) {
 	Assimp::Importer importer;
-	static const aiScene *scene = importer.ReadFile(routes->model.c_str(), 
-		aiProcess_Triangulate | 
-		aiProcess_FlipUVs |
-		aiProcess_GenSmoothNormals |
-		aiProcess_CalcTangentSpace |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType
-	);
+	cout << routes->model << endl;
+	const aiScene *scene = importer.ReadFile(routes->model.c_str(), aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_Triangulate);
 
 	if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
@@ -180,11 +171,9 @@ Reader::Reader(Routes* routes) :Model(routes) {
 	}
 
 	//-- 
-	/*this->readMaterials(scene);
-	this->readMeshes(scene);
-	this->readNodes(scene);*/
-
-
+	//this->readMaterials(scene);
+	//this->readMeshes(scene);
+	/*this->readNodes(scene);*/
 
 	this->processNode(scene->mRootNode, scene);
 	this->roundIt();

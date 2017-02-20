@@ -1,39 +1,53 @@
 #version 330
+#define NLIGHTS 1
 
 //-- In values
 in vec3 o_normal;
 in vec3 o_toLight;
 in vec3 o_toCamera;
 in vec2 o_textureCoord;
-
-in vec3 diffuse, ambient;
 in float dist;
 
-uniform vec3 u_lightPosition;
-
 //-- parameters of the light
-uniform vec3 u_lightAmbientIntensitys; 
-uniform vec3 u_lightDiffuseIntensitys; 
-uniform vec3 u_lightSpecularIntensitys;
-uniform vec3 u_lightAttenuation;
+struct Light{
+	vec3 ambient;
+	vec3 specular;
+	vec3 diffuse;
+
+	vec3 position;
+	vec3 direction;
+	vec3 type;
+
+	float constant;
+	float linear;
+	float quadratic;
+	float exponent;
+	float cosCutOff;
+};
 
 //-- parameters of the material
-uniform vec3 u_matAmbientReflectances; 
-uniform vec3 u_matDiffuseReflectances; 
-uniform vec3 u_matSpecularReflectances; 
+struct Material{
+	vec3 ambient;
+	vec3 specular;
+	vec3 diffuse;
 
-//-- Variables
-uniform vec3 u_lightSpotDirection;
-uniform float u_lightSpotExp;
-uniform float u_spotCosCutOff;
-uniform float u_shininess; 
-uniform float u_roughness;
-uniform float u_fresnel;
-uniform float u_albedo;
+	float shininess;
+	float roughness;
+	float fresnel;
+	float albedo;
+};
+
+uniform Light u_light[NLIGHTS];
+uniform Material u_material;
+uniform vec3 u_camera_position;
+uniform mat4 u_view_matrix;
+uniform mat4 u_projection_matrix;
+uniform mat4 u_normal_matrix;
+uniform mat4 u_model_matrix;
 uniform vec4 u_shadingBitMap;
 uniform int u_textureIsActive;
-uniform vec3 u_lightType;
 uniform sampler2D u_texture;
+
 
 float attenuation = 1.0;
 
@@ -42,35 +56,19 @@ out vec4 resultingColor;
 
 
 float CalculateAttenuation(){
-	if (u_lightType.x == 1 ){
-		//-- Direcional
-		return 1.0;
-	}else if (u_lightType.y == 1){
-		//-- Puntual
-		return 1.0 / (u_lightAttenuation.x + u_lightAttenuation.y * dist + u_lightAttenuation.z * dist * dist);
-	}else if (u_lightType.z == 1){
-		//-- Reflector
-		float spotEffect;
-		spotEffect = dot(normalize(u_lightSpotDirection), normalize(o_toLight));
-
-		if ( spotEffect > u_spotCosCutOff )
-			return spotEffect / (u_lightAttenuation.x + u_lightAttenuation.y * dist + u_lightAttenuation.z * dist * dist);
-
-		return 1.0;
-	}
 	return 1.0;
 }
 
 
 // -- returns intensity of reflected ambient lighting
 vec3 ambientLighting(){
-   return u_matAmbientReflectances * u_lightAmbientIntensitys;
+	return u_material.ambient * u_light[0].ambient;
 }
 
 
 // -- returns intensity of diffuse reflection
 vec3 diffuseLighting(in vec3 N, in vec3 L){
-   return max(dot(N, L), 0.0) * u_matDiffuseReflectances * u_lightDiffuseIntensitys;
+   return max(dot(N, L), 0.0) * u_material.diffuse * u_light[0].diffuse;
 }
 
 
@@ -81,10 +79,10 @@ vec3 specularLightingBlinn(in vec3 N, in vec3 L, in vec3 V){
    if(dot(N, L) > 0){
       // -- half vector
       vec3 H = normalize(L + V);
-      specularTerm = CalculateAttenuation() * max(pow(dot(N, H),u_shininess),0.0);
+      specularTerm = CalculateAttenuation() * max(pow(dot(N, H), u_material.shininess),0.0);
    }
 
-   return specularTerm * u_matSpecularReflectances * u_lightSpecularIntensitys;
+   return specularTerm * u_material.specular * u_light[0].specular;
 }
 
 
@@ -112,5 +110,5 @@ vec4 calculateBlinnPhong(void) {
 
 void main(void){
 	vec4 BlinnPhong = calculateBlinnPhong();
-	resultingColor = BlinnPhong * texture(u_texture, o_textureCoord);
+	resultingColor = mix(BlinnPhong, texture(u_texture, o_textureCoord), 0.5);
 }

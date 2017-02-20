@@ -1,6 +1,6 @@
 #include <OBJ.h>
 
-OBJ::OBJ(Routes* routes, Transformation* transformation, Light* light):Model(routes, transformation, light) {
+OBJ::OBJ(Routes* routes):Model(routes) {
 	//PONER NOMBRE DEL ARCHIVO | RUTA
 	// string archivo=openfilename(); //PILA
 	string archivo = routes->model;

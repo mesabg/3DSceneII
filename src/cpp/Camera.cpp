@@ -47,7 +47,7 @@ Camera::Camera() {
 	this->refresh();
 }
 
-Camera::Camera(Player * player){
+Camera::Camera(Transformation * player){
 	this->position = vec3(3.0f, 3.0f, 10.0f);
 	this->target = vec3(0.0f, 0.0f, -1.0f);
 	this->up = vec3(0.0f, 1.0f, 0.0f);
@@ -75,6 +75,10 @@ Camera::~Camera() {
 
 mat4 Camera::getMatrix() {
 	return this->view;
+}
+
+mat4 * Camera::getView(){
+	return &this->view;
 }
 
 vec3 Camera::getPosition() {

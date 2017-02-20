@@ -8,6 +8,8 @@
 #include <Light.h>
 #include <Camera.h>
 #include <Projection.h>
+#include <Player.h>
+#include <ModelCollection.h>
 
 extern unsigned int amountOfEntities;
 extern unsigned int amountOfLights;
@@ -24,6 +26,8 @@ private:
 	Camera* camera;
 	Projection* projection;
 	vector<Model*> entities, lightModels;
+	ModelCollection *modelCollection, *lightCollection;
+	map<string, CGLSLProgram*> *illuminationPrograms;
 	Player* player;
 	MousePicker* mousePicker;
 	float width;
@@ -40,7 +44,6 @@ private:
 	//-- Functions
 	Stage(RenderController* renderController);
 	~Stage();
-
 public:
 
 	/*Get Instance*/
@@ -53,6 +56,9 @@ public:
 	Model* getSelectedLight();
 	float* getSelectedModelIndex();
 	float* getSelectedLightIndex();
+
+	//-- 
+	void initGLSLPrograms();
 
 	/*Get message*/
 	void Notify(string message, void* data);

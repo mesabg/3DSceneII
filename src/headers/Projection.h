@@ -25,6 +25,7 @@ public:
 
 	/*Getters*/
 	mat4 getMatrix();
+	mat4 *getProjection();
 	float getFieldOfView();
 	float getAspectRatio();
 	float getNear();

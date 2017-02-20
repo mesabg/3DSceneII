@@ -117,8 +117,9 @@ void Model::bindData(Projection* projection, Camera* camera, vector<Light*> *glo
 		*(this->materialProperties->getAlbedo()));
 
 	//-- Something else
-	glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_textureIsActive"), 
-		(GLint)*(this->texture->isActive()));
+	if (this->texture)
+		glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_textureIsActive"), 
+			(GLint)*(this->texture->isActive()));
 
 	glUniform4f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_shadingBitMap"),
 		this->shading.x,
@@ -154,8 +155,6 @@ void Model::drawElements(){
 }
 
 Model::Model() {
-	//this->glVBO = (GLfloat*)malloc(sizeof(GLfloat));
-
 	/*Init Uniforms ID*/
 	this->ID = new vector<GLint>(8, 0);
 
@@ -183,7 +182,7 @@ Model::Model(Routes* routes) {
 	//-- Init Material Colors
 	this->material = NULL;
 
-	this->materialProperties = new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f);
+	this->materialProperties = NULL;
 	this->shading = vec4(true, false, false, false);
 	this->lightningType = vec2(true, false);
 	this->animation = NULL;
@@ -319,7 +318,7 @@ void Model::Inherit(Model * model) {
 	this->glVBO_indexes_size = model->getGLVBO_indexes_size();
 }
 
-void Model::initGLDataBinding(int index) {
+void Model::initGLDataBinding() {
 	this->glVBO_indexes_size = this->glVBO_indexes.size();
 
 	// -- VBO Data

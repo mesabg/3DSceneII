@@ -2,15 +2,15 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-/*Global includes*/
+//-- Global includes
 #include <glew\glew.h>
 #include <glfw3.h>
 #include <glm\glm\glm.hpp>
 #include <glm\glm\gtc\matrix_transform.hpp>
 #include <glm\glm\gtc\type_ptr.hpp>
 
-/*Class Includes*/
-#include <Player.h>
+//-- Class Includes
+#include <Transformation.h>
 
 using glm::mat4;
 using glm::vec3;
@@ -22,7 +22,7 @@ private:
 	vec3 target;	/*What you want to look at (center of the principal player)*/
 	vec3 up;		/*(0, 1, 0) to look upside*/
 	vec3 cameraFront;
-	Player *player;
+	Transformation *player;
 
 	//-- Varibles to move camera
 	float distanceFromPlayer;
@@ -42,12 +42,13 @@ private:
 
 public:
 	Camera();
-	Camera(Player* player);
+	Camera(Transformation* player);
 	Camera(vec3 position, vec3 target, vec3 up);
 	~Camera();
 
 	/*Getters*/
 	mat4 getMatrix();
+	mat4* getView();
 	vec3 getPosition();
 	vec3 getTarget();
 	vec3 getUp();

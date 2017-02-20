@@ -9,8 +9,8 @@
 
 //-- Class Includes
 #include <CGLSLProgram.h>
-/*
-#include <Camera.h>*/
+
+#include <Camera.h>
 #include <Projection.h>
 #include <BoundingBox.h>
 #include <Transformation.h>
@@ -114,7 +114,7 @@ public:
 	void Inherit(Model* model);
 
 	//-- Functions
-	void initGLDataBinding(int index);
+	void initGLDataBinding();
 	bool isPointed(vec3 ray);
 	void roundIt();
 };
