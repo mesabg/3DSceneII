@@ -32,6 +32,11 @@ void ModelCollection::initVBOs(){
 		model->initGLDataBinding();
 }
 
+void ModelCollection::setSkyBox(SkyBox * skybox){
+	for (Model* model : this->entities)
+		model->setSkyBox(skybox);
+}
+
 Model * ModelCollection::getEntity(const unsigned int index){
 	return this->entities[index];
 }

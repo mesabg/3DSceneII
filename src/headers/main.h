@@ -6,6 +6,8 @@
 //-- Global Variables
 unsigned int amountOfEntities = 9;
 unsigned int amountOfLights = 1;
+unsigned int Gwidth = 1440;
+unsigned int Gheight = 900;
 
 //-- Global Functions
 float getFrameTimeSeconds();

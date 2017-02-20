@@ -15,7 +15,7 @@
 #include <BoundingBox.h>
 #include <Transformation.h>
 #include <Animation.h>
-#include <Texture.h>
+#include <SkyBox.h>
 #include <Routes.h>
 #include <Light.h>
 #include <MaterialProperties.h>
@@ -55,6 +55,7 @@ protected:
 	Transformation* transformation;
 	BoundingBox* boundingBox;
 	Texture* texture;
+	SkyBox* skyboxReference;
 
 	//-- Shader Active
 	tvec4<bool> shading;
@@ -109,6 +110,7 @@ public:
 	void setMaterialProperties(MaterialProperties* materialProperties);
 	void setLight(Light* light);
 	void setShader(CGLSLProgram* shader);
+	void setSkyBox(SkyBox* skybox);
 
 	//-- Inherit
 	void Inherit(Model* model);

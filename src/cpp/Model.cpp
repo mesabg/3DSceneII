@@ -134,6 +134,11 @@ void Model::drawElements(){
 	glBindTexture(GL_TEXTURE_2D, this->texture->getID());
 	glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_texture"), 0);
 
+	//-- Bind MipMap From the SkyBox
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, this->skyboxReference->getTextureID());
+	glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_cube_map"), 1);
+
 	// -- VBO Data
 	glBindBuffer(GL_ARRAY_BUFFER, this->glVBO_dir);
 	// -- Vertex 
@@ -181,6 +186,8 @@ Model::Model(Routes* routes) {
 
 	//-- Init Material Colors
 	this->material = NULL;
+
+	this->skyboxReference = NULL;
 
 	this->materialProperties = NULL;
 	this->shading = vec4(true, false, false, false);
@@ -303,6 +310,10 @@ void Model::setLight(Light * light){
 
 void Model::setShader(CGLSLProgram * shader){
 	this->shaderProgram = shader;
+}
+
+void Model::setSkyBox(SkyBox * skybox){
+	this->skyboxReference = skybox;
 }
 
 void Model::Inherit(Model * model) {

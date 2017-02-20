@@ -123,6 +123,9 @@
     <ClInclude Include="..\src\headers\ModelCollection.h">
       <Filter>Model\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\headers\FrameBuffer.h">
+      <Filter>Render Interface\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\cpp\Main.cpp">
@@ -196,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="..\src\cpp\ModelCollection.cpp">
       <Filter>Model\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\FrameBuffer.cpp">
+      <Filter>Render Interface\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

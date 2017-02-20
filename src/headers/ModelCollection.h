@@ -39,6 +39,7 @@ public:
 	//-- Methods
 	void render(Projection* projection, Camera* camera, vector<Light*>* lights, CGLSLProgram* shader);
 	void initVBOs();
+	void setSkyBox(SkyBox* skybox);
 
 	//-- Getter
 	Model* getEntity(const unsigned int index);

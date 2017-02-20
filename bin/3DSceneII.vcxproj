@@ -131,6 +131,7 @@
     <ClInclude Include="..\src\headers\Camera.h" />
     <ClInclude Include="..\src\headers\CGLSLProgram.h" />
     <ClInclude Include="..\src\headers\ConcreteRenderController.h" />
+    <ClInclude Include="..\src\headers\FrameBuffer.h" />
     <ClInclude Include="..\src\headers\GUI.h" />
     <ClInclude Include="..\src\headers\Light.h" />
     <ClInclude Include="..\src\headers\MaterialProperties.h" />
@@ -157,6 +158,7 @@
     <ClCompile Include="..\src\cpp\Camera.cpp" />
     <ClCompile Include="..\src\cpp\CGLSLProgram.cpp" />
     <ClCompile Include="..\src\cpp\ConcreteRenderController.cpp" />
+    <ClCompile Include="..\src\cpp\FrameBuffer.cpp" />
     <ClCompile Include="..\src\cpp\GUI.cpp" />
     <ClCompile Include="..\src\cpp\Light.cpp" />
     <ClCompile Include="..\src\cpp\MaterialProperties.cpp" />

@@ -7,6 +7,8 @@ in vec3 o_toLight;
 in vec3 o_toCamera;
 in vec2 o_textureCoord;
 in float dist;
+in vec3 reflectedVector;
+in vec3 refractedVector;
 
 //-- parameters of the light
 struct Light{
@@ -47,6 +49,7 @@ uniform mat4 u_model_matrix;
 uniform vec4 u_shadingBitMap;
 uniform int u_textureIsActive;
 uniform sampler2D u_texture;
+uniform samplerCube u_cube_map;
 
 
 float attenuation = 1.0;
@@ -111,4 +114,10 @@ vec4 calculateBlinnPhong(void) {
 void main(void){
 	vec4 BlinnPhong = calculateBlinnPhong();
 	resultingColor = mix(BlinnPhong, texture(u_texture, o_textureCoord), 0.5);
+
+	vec4 reflectedColor = texture(u_cube_map, reflectedVector);
+	vec4 refractedColor = texture(u_cube_map, refractedVector);
+	vec4 enviroColor = mix(reflectedColor, refractedColor, 0.5);
+
+	resultingColor = mix(resultingColor, enviroColor, 1.0);
 }

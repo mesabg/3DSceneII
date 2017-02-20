@@ -235,6 +235,9 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 		"../sky/space/front.png"}, 
 		this->projection->getProjection(), 
 		this->camera->getView());
+
+	this->modelCollection->setSkyBox(this->skyBox);
+	this->lightCollection->setSkyBox(this->skyBox);
 }
 
 Stage::~Stage() {

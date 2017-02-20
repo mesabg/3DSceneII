@@ -69,7 +69,7 @@ void SkyBox::initVBO(){
 
 void SkyBox::initTextures(vector<string> *textureFiles){
 	glGenTextures(1, &this->textureID);
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE1);
 	
 	int width, height;
 	unsigned char* image;
@@ -78,9 +78,9 @@ void SkyBox::initTextures(vector<string> *textureFiles){
 		textureFiles->at(0).c_str(),
 		textureFiles->at(1).c_str(),
 		textureFiles->at(2).c_str(),
-		textureFiles->at(0).c_str(),
-		textureFiles->at(0).c_str(),
-		textureFiles->at(0).c_str(),
+		textureFiles->at(3).c_str(),
+		textureFiles->at(4).c_str(),
+		textureFiles->at(5).c_str(),
 		SOIL_LOAD_RGB,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS
@@ -136,9 +136,9 @@ void SkyBox::render(){
 	glUniformMatrix4fv(glGetUniformLocation(this->shader->getProgramID(), "u_view_matrix"), 1, GL_FALSE, &_view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(this->shader->getProgramID(), "u_projection_matrix"), 1, GL_FALSE, &_projection[0][0]);
 
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, this->textureID);
-	glUniform1i(glGetUniformLocation(this->shader->getProgramID(), "u_cube_map"), 0);
+	glUniform1i(glGetUniformLocation(this->shader->getProgramID(), "u_cube_map"), 1);
 	glBindVertexArray(this->glVAO_dir);
 
 	glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -146,4 +146,8 @@ void SkyBox::render(){
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	this->shader->disable();
+}
+
+GLuint SkyBox::getTextureID(){
+	return this->textureID;
 }
