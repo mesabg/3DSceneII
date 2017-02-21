@@ -69,6 +69,14 @@ Camera::Camera(vec3 position, vec3 target, vec3 up) {
 	this->refresh();
 }
 
+Camera::Camera(vec3 position, float pitch, float yaw, vec3 up){
+	this->position = position;
+	this->pitch = pitch;
+	this->yaw = yaw;
+	this->up = up;
+	this->refresh();
+}
+
 Camera::~Camera() {
 
 }
@@ -111,6 +119,12 @@ void Camera::setTarget(vec3 target) {
 
 void Camera::setUp(vec3 up) {
 	this->up = up;
+	this->refresh();
+}
+
+void Camera::setPitchYaw(float pitch, float yaw){
+	this->pitch = pitch;
+	this->yaw = yaw;
 	this->refresh();
 }
 

@@ -5,6 +5,15 @@ using namespace std;
 
 Stage* Stage::uniqueStage = NULL;
 
+void Stage::switchFace(Camera * cam, const int index){
+	if (index == 0) cam->setPitchYaw(0.0f, 90.0f);
+	else if (index == 1) cam->setPitchYaw(0.0f, -90.0f);
+	else if (index == 2) cam->setPitchYaw(-90.0f, 180.0f);
+	else if (index == 3) cam->setPitchYaw(90.0f, 180.0f);
+	else if (index == 4) cam->setPitchYaw(0.0f, 180.0f);
+	else if (index == 5) cam->setPitchYaw(0.0f, 0.0f);
+}
+
 Stage::Stage(RenderController* renderController) :RenderColleague(renderController) {
 	this->initGLSLPrograms();
 	//-- Init local structures
@@ -191,8 +200,12 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsMaterialProperties[8] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
+	//-- Reflection Mapping Vector
+	vector<bool> reflectionVectorMapModels = {false, false, false, false, false, false, false, false, true};
+
 	//-- Init Model Collection
 	this->modelCollection = new ModelCollection(modelsRoutes, modelsTransform, modelsLight, modelsMaterialProperties);
+	this->modelCollection->setReflectionMap(reflectionVectorMapModels);
 
 	//-- Light Models Loading
 	vector<Routes*> lightsRoutes(amountOfLights, NULL);
@@ -218,8 +231,12 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	lightsMaterialProperties[0] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
+	//-- Reflection map to the lights
+	vector<bool> reflectionVectorMapLights = { false, false, false, false, false, false, false, false, true };
+
 	//-- Initializing Light Collection
 	this->lightCollection = new ModelCollection(lightsRoutes, lightsTransform, lightsLight, lightsMaterialProperties);
+	this->lightCollection->setReflectionMap(reflectionVectorMapLights);
 
 	//-- Initializing Player
 	this->player = new Player(this->modelCollection->getEntity(0));
@@ -238,10 +255,83 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 
 	this->modelCollection->setSkyBox(this->skyBox);
 	this->lightCollection->setSkyBox(this->skyBox);
+
+	//-- Init Frame Buffer Object
+	this->frameBufferObject = new FrameBuffer();
 }
 
 Stage::~Stage() {
 
+}
+
+void Stage::backRender(Camera* cam, Projection* proj){
+	//-- Render SkyBox
+	this->skyBox->render();
+
+	//-- Move Player
+	this->player->move();
+
+	//-- Move Camera
+	this->camera->move();
+
+	//-- Calculating Mouse Ray
+	this->mousePicker->calculateRay();
+
+	//-- Render the model collection and light collection
+	this->modelCollection->render(
+		proj,
+		cam,
+		this->lightCollection->getLightSet(),
+		this->illuminationPrograms,
+		{ "Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong" });
+	this->lightCollection->render(
+		proj,
+		cam,
+		this->lightCollection->getLightSet(),
+		this->illuminationPrograms->at("Blinn-Phong"));
+}
+
+void Stage::frontRender(){
+	//-- Render SkyBox
+	this->skyBox->render();
+
+	//-- Move Player
+	this->player->move();
+
+	//-- Move Camera
+	this->camera->move();
+
+	//-- Calculating Mouse Ray
+	this->mousePicker->calculateRay();
+
+	//-- Render the model collection and light collection
+	this->modelCollection->render(
+		this->projection,
+		this->camera,
+		this->lightCollection->getLightSet(),
+		this->illuminationPrograms,
+		{ "Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong",
+		"Blinn-Phong-With-Reflections" });
+	this->lightCollection->render(
+		this->projection,
+		this->camera,
+		this->lightCollection->getLightSet(),
+		this->illuminationPrograms->at("Blinn-Phong"));
 }
 
 void Stage::initGLSLPrograms(){
@@ -255,7 +345,8 @@ void Stage::initGLSLPrograms(){
 	this->illuminationPrograms = new map<string, CGLSLProgram*>();
 	vector< map<string, string>* > *routes = new vector< map<string, string>* >({
 	//new map<string, string>({ { "name", "Phong" }, { "vertex", "../src/shaders/Phong.vert" }, { "fragment", "../src/shaders/Phong.frag" } } ),
-	new map<string, string>({ { "name", "Blinn-Phong" },{ "vertex", "../src/shaders/BlinnPhong.vert" }, { "fragment", "../src/shaders/BlinnPhong.frag" } })
+	new map<string, string>({ { "name", "Blinn-Phong" },{ "vertex", "../src/shaders/BlinnPhong.vert" }, { "fragment", "../src/shaders/BlinnPhong.frag" } }),
+	new map<string, string>({ { "name", "Blinn-Phong-With-Reflections" },{ "vertex", "../src/shaders/BlinnPhongReflections.vert" },{ "fragment", "../src/shaders/BlinnPhongReflections.frag" } })
 	//new map<string, string>({ { "name", "Oren-Nayar" },{ "vertex", "../src/shaders/Phong.vert" }, { "fragment", "../src/shaders/Phong.frag" } }),
 	//new map<string, string>({ { "name", "Cook-Torrance" },{ "vertex", "../src/shaders/Phong.vert" }, { "fragment", "../src/shaders/Phong.frag" } })
 	});
@@ -346,28 +437,25 @@ void Stage::Notify(string message, void* data) {
 	}*/
 }
 
+void Stage::buildDynamicCubeMap(const int entityID){
+	this->modelCollection->getEntity(entityID)->isReflect(true);
+	Camera* aux_camera = new Camera(this->modelCollection->getEntity(entityID)->getBoundingBox()->getCenter(), 0.0f, 0.0f, vec3(0.0f, 1.0f, 0.0f));
+	Projection* aux_projection = new Projection(90.0f, 1.0f, 1.0f, 1000.0f);
+	
+	for (int i = 0; i < 6; i++){
+		this->frameBufferObject->bindCubeFrameBuffer();
+		this->switchFace(aux_camera, i);
+		this->backRender(aux_camera, aux_projection);
+		this->frameBufferObject->bindCubeMapTexture(
+			this->modelCollection->getEntity(entityID)->getTexture()->getCubeMapTexture(), i
+		);
+		this->frameBufferObject->unbindCurrentFrameBuffer();
+	}
+	
+}
+
 void Stage::render() {
-	//-- Render SkyBox
-	this->skyBox->render();
-
-	//-- Move Player
-	this->player->move();
-
-	//-- Move Camera
-	this->camera->move();
-
-	//-- Calculating Mouse Ray
-	this->mousePicker->calculateRay();
-
-	//-- Render the model collection and light collection
-	this->modelCollection->render(
-		this->projection, 
-		this->camera, 
-		this->lightCollection->getLightSet(), 
-		this->illuminationPrograms->at("Blinn-Phong"));
-	this->lightCollection->render(
-		this->projection, 
-		this->camera, 
-		this->lightCollection->getLightSet(), 
-		this->illuminationPrograms->at("Blinn-Phong"));
+	//-- Build Necesary CubeMaps
+	this->buildDynamicCubeMap(8);
+	this->frontRender();
 }

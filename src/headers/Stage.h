@@ -10,6 +10,7 @@
 #include <Projection.h>
 #include <Player.h>
 #include <ModelCollection.h>
+#include <FrameBuffer.h>
 
 extern unsigned int amountOfEntities;
 extern unsigned int amountOfLights;
@@ -41,9 +42,16 @@ private:
 	//-- Uniforms IDs
 	vector<GLint> *ID;
 
+	//-- Frame Buffer Object to build dynamic MipMaps
+	FrameBuffer* frameBufferObject;
+
 	//-- Functions
+	void switchFace(Camera* cam, const int index);
+
 	Stage(RenderController* renderController);
 	~Stage();
+	void backRender(Camera* cam, Projection* proj);
+	void frontRender();
 public:
 
 	/*Get Instance*/
@@ -62,6 +70,9 @@ public:
 
 	/*Get message*/
 	void Notify(string message, void* data);
+
+	//-- Build Dynamic CubeMap
+	void buildDynamicCubeMap(const int entityID);
 
 	/*Functions*/
 	void render();

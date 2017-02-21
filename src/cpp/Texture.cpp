@@ -1,9 +1,23 @@
 #include <Texture.h>
 #include <iostream>
 
+void Texture::loadDeafultCubeMap(){
+	glGenTextures(1, &this->cubemap_texture);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, this->cubemap_texture);
+	for (int i = 0; i < 6; i++)
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA8, 128, 128, 0, GL_RGBA8, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+}
+
 Texture::Texture(string route) {
 	this->route = route;
 	this->m_texture = loadTexture(route.c_str());
+	loadDeafultCubeMap();
 	this->active = true;
 }
 
@@ -32,6 +46,10 @@ void Texture::setActive(bool active){
 
 bool * Texture::isActive(){
 	return &this->active;
+}
+
+GLuint Texture::getCubeMapTexture(){
+	return this->cubemap_texture;
 }
 
 Texture::~Texture() {

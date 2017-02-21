@@ -9,7 +9,6 @@
 
 //-- Class Includes
 #include <CGLSLProgram.h>
-
 #include <Camera.h>
 #include <Projection.h>
 #include <BoundingBox.h>
@@ -61,6 +60,9 @@ protected:
 	tvec4<bool> shading;
 	tvec2<bool> lightningType;
 
+	//--Is reflected
+	bool isReflected;
+
 	//-- Light material values
 	Light* material;
 	MaterialProperties* materialProperties;
@@ -111,6 +113,7 @@ public:
 	void setLight(Light* light);
 	void setShader(CGLSLProgram* shader);
 	void setSkyBox(SkyBox* skybox);
+	void isReflect(bool isReflected);
 
 	//-- Inherit
 	void Inherit(Model* model);

@@ -27,6 +27,7 @@ class ModelCollection{
 protected:
 	vector<Model*> entities;
 	vector<Light*> lightSet;
+	vector<bool> reflectionMap;
 public:
 	ModelCollection(
 		vector<Routes*> routes, 
@@ -38,8 +39,10 @@ public:
 
 	//-- Methods
 	void render(Projection* projection, Camera* camera, vector<Light*>* lights, CGLSLProgram* shader);
+	void render(Projection* projection, Camera* camera, vector<Light*>* lights, map<string, CGLSLProgram*> *shaders, vector<string> position);
 	void initVBOs();
 	void setSkyBox(SkyBox* skybox);
+	void setReflectionMap(vector<bool> reflectionMap);
 
 	//-- Getter
 	Model* getEntity(const unsigned int index);

@@ -148,6 +148,12 @@ void SkyBox::render(){
 	this->shader->disable();
 }
 
+void SkyBox::enable(GLuint shadeID, const int index){
+	glActiveTexture(GL_TEXTURE0 + index);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, this->textureID);
+	glUniform1i(glGetUniformLocation(shadeID, "u_cube_map"), 0 + index);
+}
+
 GLuint SkyBox::getTextureID(){
 	return this->textureID;
 }

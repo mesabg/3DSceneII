@@ -46,6 +46,7 @@ public:
 	~SkyBox();
 
 	void render();
+	void enable(GLuint shadeID, const int index);
 	GLuint getTextureID();
 };
 

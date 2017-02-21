@@ -205,18 +205,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\src\shaders\byFragmentLightning.frag">
-      <Filter>Shaders\Fragment</Filter>
-    </None>
-    <None Include="..\src\shaders\byFragmentLightning.vert">
-      <Filter>Shaders\Vertex</Filter>
-    </None>
-    <None Include="..\src\shaders\Vertex1.vert">
-      <Filter>Shaders\Vertex</Filter>
-    </None>
-    <None Include="..\src\shaders\Vertex2.vert">
-      <Filter>Shaders\Vertex</Filter>
-    </None>
     <None Include="..\src\shaders\BlinnPhong.frag">
       <Filter>Shaders\Fragment</Filter>
     </None>
@@ -227,6 +215,12 @@
       <Filter>Shaders\Vertex</Filter>
     </None>
     <None Include="..\src\shaders\BlinnPhong.vert">
+      <Filter>Shaders\Vertex</Filter>
+    </None>
+    <None Include="..\src\shaders\BlinnPhongReflections.frag">
+      <Filter>Shaders\Fragment</Filter>
+    </None>
+    <None Include="..\src\shaders\BlinnPhongReflections.vert">
       <Filter>Shaders\Vertex</Filter>
     </None>
   </ItemGroup>

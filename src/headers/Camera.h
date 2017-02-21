@@ -44,6 +44,7 @@ public:
 	Camera();
 	Camera(Transformation* player);
 	Camera(vec3 position, vec3 target, vec3 up);
+	Camera(vec3 position, float pitch, float yaw, vec3 up);
 	~Camera();
 
 	/*Getters*/
@@ -58,6 +59,7 @@ public:
 	void setPositionAndTarget(vec3 position, vec3 target);	/*Es la funcion que más va a ayudar*/
 	void setTarget(vec3 target);
 	void setUp(vec3 up);
+	void setPitchYaw(float pitch, float yaw);
 
 	/*Adders*/
 	void addPosition(vec3 position);

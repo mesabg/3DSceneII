@@ -134,10 +134,14 @@ void Model::drawElements(){
 	glBindTexture(GL_TEXTURE_2D, this->texture->getID());
 	glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_texture"), 0);
 
-	//-- Bind MipMap From the SkyBox
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, this->skyboxReference->getTextureID());
-	glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_cube_map"), 1);
+	//-- Bind MipMap From the SkyBox if its necesary
+	if (this->isReflected) {
+		//-- Calculate dynamic MipMapping
+		//this->skyboxReference->enable(this->shaderProgram->getProgramID(), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->getCubeMapTexture());
+		glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_cube_map"), 1);
+	}
 
 	// -- VBO Data
 	glBindBuffer(GL_ARRAY_BUFFER, this->glVBO_dir);
@@ -190,6 +194,7 @@ Model::Model(Routes* routes) {
 	this->skyboxReference = NULL;
 
 	this->materialProperties = NULL;
+	this->isReflected = false;
 	this->shading = vec4(true, false, false, false);
 	this->lightningType = vec2(true, false);
 	this->animation = NULL;
@@ -314,6 +319,10 @@ void Model::setShader(CGLSLProgram * shader){
 
 void Model::setSkyBox(SkyBox * skybox){
 	this->skyboxReference = skybox;
+}
+
+void Model::isReflect(bool isReflected){
+	this->isReflected = isReflected;
 }
 
 void Model::Inherit(Model * model) {

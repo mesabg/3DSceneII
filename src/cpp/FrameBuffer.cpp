@@ -3,9 +3,11 @@
 FrameBuffer::FrameBuffer(){
 	initialiseReflectionFrameBuffer();
 	initialiseRefractionFrameBuffer();
+	initialiseCubeMapFrameBuffer();
 }
 
 FrameBuffer::~FrameBuffer(){
+
 }
 
 void FrameBuffer::cleanUp(){
@@ -19,6 +21,14 @@ void FrameBuffer::cleanUp(){
 
 void FrameBuffer::bindReflectionFrameBuffer(){
 	bindFrameBuffer(reflectionFrameBuffer, REFLECTION_WIDTH, REFLECTION_HEIGHT);
+}
+
+void FrameBuffer::bindCubeFrameBuffer(){
+	bindFrameBuffer(cubeMapFrameBuffer, CUBEMAP_WIDTH, CUBEMAP_HEIGHT);
+}
+
+void FrameBuffer::bindCubeMapTexture(GLuint textureID, const int index){
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, textureID, 0);
 }
 
 void FrameBuffer::bindRefractionFrameBuffer(){
@@ -56,6 +66,12 @@ void FrameBuffer::initialiseRefractionFrameBuffer(){
 	unbindCurrentFrameBuffer();
 }
 
+void FrameBuffer::initialiseCubeMapFrameBuffer(){
+	cubeMapFrameBuffer = createFrameBuffer();
+	cubeMapDepthBuffer = createDepthBufferAttachment(CUBEMAP_WIDTH, CUBEMAP_HEIGHT);
+	unbindCurrentFrameBuffer();
+}
+
 void FrameBuffer::bindFrameBuffer(int frameBuffer, int width, int height){
 	glBindTexture(GL_TEXTURE_2D, 0);//To make sure the texture isn't bound
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
@@ -86,6 +102,19 @@ GLuint FrameBuffer::createTextureAttachment(int width, int height){
 	return texture;
 }
 
+GLuint FrameBuffer::createCubeTextureAttachment(int width, int height, GLuint textureID){
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height,
+		0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		texture, 0);
+	return texture;
+}
+
 GLuint FrameBuffer::createDepthTextureAttachment(int width, int height){
 	GLuint texture;
 	glGenTextures(1, &texture);
@@ -103,7 +132,7 @@ GLuint FrameBuffer::createDepthBufferAttachment(int width, int height){
 	GLuint depthBuffer;
 	glGenRenderbuffers(1, &depthBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width,
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width,
 		height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
 		GL_RENDERBUFFER, depthBuffer);

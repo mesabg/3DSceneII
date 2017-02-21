@@ -10,6 +10,8 @@ out vec3 o_toLight;
 out vec3 o_toCamera;
 out vec2 o_textureCoord;
 out float dist;
+out vec3 reflectedVector;
+out vec3 refractedVector;
 
 //-- parameters of the light
 struct Light{
@@ -65,6 +67,11 @@ void main(void){
 
 	//-- direction to camera
 	o_toCamera = normalize( u_camera_position - worldPosition.xyz );
+
+	//-- Calculate reflected vector
+	vec3 viewVector = normalize(worldPosition.xyz - u_camera_position);
+	reflectedVector = reflect(viewVector, normalize(i_normal));
+	refractedVector = refract(viewVector, normalize(i_normal), 1.0/1.33);
 
 	//-- screen space coordinates of the vertex
 	o_textureCoord = i_texture;

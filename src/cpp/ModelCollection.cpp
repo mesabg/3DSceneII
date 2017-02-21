@@ -12,6 +12,7 @@ ModelCollection::ModelCollection(
 		this->entities.back()->setLight(lights[i]);
 		this->lightSet.push_back(lights[i]);
 		this->entities.back()->setMaterialProperties(materialProperties[i]);
+		this->reflectionMap.push_back(false);
 	}
 }
 
@@ -21,9 +22,22 @@ ModelCollection::~ModelCollection(){
 }
 
 void ModelCollection::render(Projection* projection, Camera* camera, vector<Light*>* lights, CGLSLProgram* shader){
+	unsigned int index = 0;
 	for (Model* model : this->entities) {
 		model->setShader(shader);
+		model->isReflect(this->reflectionMap[index]);
 		model->render(projection, camera, lights);
+		index++;
+	}
+}
+
+void ModelCollection::render(Projection * projection, Camera * camera, vector<Light*>* lights, map<string, CGLSLProgram*> *shaders, vector<string> position){
+	unsigned int index = 0;
+	for (Model* model : this->entities) {
+		model->setShader(shaders->at(position[index]));
+		model->isReflect(this->reflectionMap[index]);
+		model->render(projection, camera, lights);
+		index++;
 	}
 }
 
@@ -35,6 +49,10 @@ void ModelCollection::initVBOs(){
 void ModelCollection::setSkyBox(SkyBox * skybox){
 	for (Model* model : this->entities)
 		model->setSkyBox(skybox);
+}
+
+void ModelCollection::setReflectionMap(vector<bool> reflectionMap){
+	this->reflectionMap = reflectionMap;
 }
 
 Model * ModelCollection::getEntity(const unsigned int index){

@@ -14,8 +14,12 @@ class Texture {
 private:
 	string route;
 	GLuint m_texture;
+	GLuint cubemap_texture;
 	int num_texture;
 	bool active;
+	bool cubeMapActive;
+
+	void loadDeafultCubeMap();
 public:
 	Texture(string route);
 	~Texture();
@@ -27,6 +31,7 @@ public:
 
 	//-- Getter
 	bool* isActive();
+	GLuint getCubeMapTexture();
 };
 
 #endif
