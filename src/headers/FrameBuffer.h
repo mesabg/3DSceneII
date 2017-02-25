@@ -13,56 +13,77 @@
 //-- Using spaces
 using std::vector;
 using std::string;
+using glm::vec2;
 using glm::mat4;
 
 class FrameBuffer {
 private:
-	const int REFLECTION_WIDTH = 320;
-	const int REFLECTION_HEIGHT = 180;
+	//-- Variables
+	int IMAGE_WIDTH = 320;
+	int IMAGE_HEIGHT = 180;
 
-	const int CUBEMAP_WIDTH = 320;
-	const int CUBEMAP_HEIGHT = 320;
+	int CUBEMAP_WIDTH = 320;
+	int CUBEMAP_HEIGHT = 320;
 
-	const int REFRACTION_WIDTH = 1280;
-	const int REFRACTION_HEIGHT = 720;
-
-	GLuint reflectionFrameBuffer;
-	GLuint reflectionTexture;
-	GLuint reflectionDepthBuffer;
+	GLuint imageFrameBuffer;
+	GLuint imageDepthBuffer;
+	GLuint imageColorTexture;
+	GLuint imageDepthTexture;
 
 	GLuint cubeMapFrameBuffer;
-	GLuint cubeMapTexture;
 	GLuint cubeMapDepthBuffer;
+	GLuint cubeMapColorTexture;
+	GLuint cubeMapDepthTexture;
 
-	GLuint refractionFrameBuffer;
-	GLuint refractionTexture;
-	GLuint refractionDepthTexture;
-
-	void initialiseReflectionFrameBuffer();
-	void initialiseRefractionFrameBuffer();
+	//-- Initialize Functions
+	void initialiseImageFrameBuffer();
 	void initialiseCubeMapFrameBuffer();
 
-	void bindFrameBuffer(int frameBuffer, int width, int height);
+	void bindImageFrameBuffer(const GLuint frameBuffer, const int width, const int height);
+	void bindCubeMapFrameBuffer(const GLuint frameBuffer, const int width, const int height);
+	
+	//-- Create Functions
 	GLuint createFrameBuffer();
-	GLuint createTextureAttachment(int width, int height);
-	GLuint createCubeTextureAttachment(int width, int height, GLuint textureID);
-	GLuint createDepthTextureAttachment(int width, int height);
-	GLuint createDepthBufferAttachment(int width, int height);
+	GLuint createDepthBufferAttachment(const int width, const int height);
+	GLuint createImageColorTextureAttachment(const int width, const int height);
+	GLuint createCubeMapColorTextureAttachment(const int width, const int height);
+	GLuint createImageDepthTextureAttachment(const int width, const int height);
+	GLuint createCubeMapDepthTextureAttachment(const int width, const int height);
+	
 public:
 	FrameBuffer();
+	FrameBuffer(const int width, const int height);
+	FrameBuffer(const glm::vec2 imageSize, const glm::vec2 cubeMapSize);
+	FrameBuffer(const int imageWidth, const int imageHeight, const int cubeMapWidth, const int cubeMapHeight);
 	~FrameBuffer();
 
-	//-- Functions
-	void cleanUp();
-	void bindReflectionFrameBuffer();
-	void bindCubeFrameBuffer();
-	void bindCubeMapTexture(GLuint textureID, const int index);
-	void bindRefractionFrameBuffer();
-	void unbindCurrentFrameBuffer();
-	GLint getReflectionTexture();
-	GLint getRefractionTexture();
-	GLint getRefractionDepthTexture();
+	//-- Getters
+	int getImageWidth();
+	int getImageHeight();
+	int getCubeMapWidth();
+	int getCubeMapHeight();
+	glm::vec2 getImageSize();
+	glm::vec2 getCubeMapSize();
+	GLuint getImageColorTexture();
+	GLuint getImageDepthTexture();
+	GLuint getCubeMapColorTexture();
+	GLuint getCubeMapDepthTexture();
 
+	//-- Setters
+	void setImageWidth(const int imageWidth);
+	void setImageHeight(const int imageHeight);
+	void setCubeMapWidth(const int cubeMapWidth);
+	void setCubeMapHeight(const int cubeMapHeight);
+	void setImageSize(const glm::vec2 imageSize);
+	void setCubeMapSize(const glm::vec2 cubeMapSize);
+
+	//-- Functions
+	void bindImageFrameBuffer();
+	void bindCubeMapFrameBuffer();
+	void activeCubeMapColorTexture(const int face);
+	void activeCubeMapDepthTexture(const int face);
+	void unbindCurrentFrameBuffer();
+	void cleanUp();
 };
 
 

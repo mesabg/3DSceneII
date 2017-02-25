@@ -213,6 +213,24 @@ void Model::render(Projection* projection, Camera* camera, vector<Light*> *globa
 	this->shaderProgram->disable();
 }
 
+void Model::lowRender(glm::mat4 depthMVP){
+	this->shaderProgram->enable();
+	glUniformMatrix4fv(glGetUniformLocation(this->shaderProgram->getProgramID(),"depthMVP"), 1, GL_FALSE, &depthMVP[0][0]);
+	// -- VBO Data
+	glBindBuffer(GL_ARRAY_BUFFER, this->glVBO_dir);
+	// -- Vertex 
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), 0);
+
+	// -- Drawing
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->glVBO_indexes_dir);
+
+	glDrawElements(GL_TRIANGLES, this->glVBO_indexes_size, GL_UNSIGNED_INT, (void*)0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	this->shaderProgram->disable();
+}
+
 vector<GLfloat> Model::getGLVBO() {
 	return this->glVBO;
 }

@@ -82,6 +82,7 @@ public:
 	Model(Routes* routes);
 	~Model();
 	void render(Projection* projection, Camera* camera, vector<Light*> *globalLights);
+	void lowRender(glm::mat4 depthMVP);
 
 	//-- Getters
 	vector<GLfloat> getGLVBO();

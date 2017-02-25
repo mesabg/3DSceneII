@@ -184,6 +184,8 @@
     <None Include="..\src\shaders\BlinnPhong.vert" />
     <None Include="..\src\shaders\BlinnPhongReflections.frag" />
     <None Include="..\src\shaders\BlinnPhongReflections.vert" />
+    <None Include="..\src\shaders\Depth.frag" />
+    <None Include="..\src\shaders\Depth.vert" />
     <None Include="..\src\shaders\Skybox.frag" />
     <None Include="..\src\shaders\Skybox.vert" />
   </ItemGroup>

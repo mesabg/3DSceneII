@@ -25,7 +25,7 @@ void ModelCollection::render(Projection* projection, Camera* camera, vector<Ligh
 	unsigned int index = 0;
 	for (Model* model : this->entities) {
 		model->setShader(shader);
-		model->isReflect(this->reflectionMap[index]);
+		//model->isReflect(this->reflectionMap[index]);
 		model->render(projection, camera, lights);
 		index++;
 	}
@@ -35,9 +35,16 @@ void ModelCollection::render(Projection * projection, Camera * camera, vector<Li
 	unsigned int index = 0;
 	for (Model* model : this->entities) {
 		model->setShader(shaders->at(position[index]));
-		model->isReflect(this->reflectionMap[index]);
+		//model->isReflect(this->reflectionMap[index]);
 		model->render(projection, camera, lights);
 		index++;
+	}
+}
+
+void ModelCollection::low_render(glm::mat4 depthMVP, CGLSLProgram * shader){
+	for (Model* model : this->entities) {
+		model->setShader(shader);
+		model->lowRender(depthMVP);
 	}
 }
 

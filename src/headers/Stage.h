@@ -36,8 +36,14 @@ private:
 	float* selectedModel;
 	float* selectedLight;
 
+	//-- Button Click variables
+	bool clicked;
+	int xPos, yPos;
+	int xPosFirst, yPosFirst;
+
 	//-- Shader ID
 	GLuint shader_id, shader_id2;
+	GLuint shadowMapId;
 
 	//-- Uniforms IDs
 	vector<GLint> *ID;
@@ -73,6 +79,9 @@ public:
 
 	//-- Build Dynamic CubeMap
 	void buildDynamicCubeMap(const int entityID);
+
+	//-- Build Shadow Map
+	void buildShadowMap();
 
 	/*Functions*/
 	void render();

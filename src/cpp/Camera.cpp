@@ -150,15 +150,15 @@ void Camera::addUp(vec3 up) {
 }
 
 void Camera::calculatePitch(int button, int action, int x, int y) {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	//--if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 		//--this->pitch -= glm::radians((float)y) * glm::radians(this->speed);
-		this->pitch -= glm::radians((float)y) * 0.08f;
+		this->pitch -= glm::radians((float)y) * 0.1f;
 }
 
 void Camera::calculateAngleAroundPlayer(int button, int action, int x, int y){
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+	//--if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 		//this->angleAroundPlayer -= glm::radians((float)x) * glm::radians(this->speed);
-		this->angleAroundPlayer -= glm::radians((float)x) * 0.08f;
+		this->angleAroundPlayer -= glm::radians((float)x) * 0.1f;
 }
 
 void Camera::move(){

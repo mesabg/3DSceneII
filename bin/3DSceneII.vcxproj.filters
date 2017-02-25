@@ -223,5 +223,11 @@
     <None Include="..\src\shaders\BlinnPhongReflections.vert">
       <Filter>Shaders\Vertex</Filter>
     </None>
+    <None Include="..\src\shaders\Depth.frag">
+      <Filter>Shaders\Fragment</Filter>
+    </None>
+    <None Include="..\src\shaders\Depth.vert">
+      <Filter>Shaders\Vertex</Filter>
+    </None>
   </ItemGroup>
 </Project>

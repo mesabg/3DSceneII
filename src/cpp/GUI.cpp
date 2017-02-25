@@ -121,7 +121,6 @@ void GUI::cursorPos(GLFWwindow* window, double x, double y) {
 	int stateMouseButtonLeft = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
 	int x1 = (int)x;
 	int y1 = (int)y;
-	localUserInterface->renderController->Send("mouseButton", (void*)(new int[4]{ GLFW_MOUSE_BUTTON_RIGHT , stateMouseButtonRight, x1, y1 }), localUserInterface);
 	localUserInterface->renderController->Send("mouseButton", (void*)(new int[4]{ GLFW_MOUSE_BUTTON_LEFT , stateMouseButtonLeft, x1, y1 }), localUserInterface);
 }
 

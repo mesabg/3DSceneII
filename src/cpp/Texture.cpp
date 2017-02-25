@@ -5,7 +5,7 @@ void Texture::loadDeafultCubeMap(){
 	glGenTextures(1, &this->cubemap_texture);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, this->cubemap_texture);
 	for (int i = 0; i < 6; i++)
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA8, 128, 128, 0, GL_RGBA8, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA8, 128, 128, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -17,7 +17,7 @@ void Texture::loadDeafultCubeMap(){
 Texture::Texture(string route) {
 	this->route = route;
 	this->m_texture = loadTexture(route.c_str());
-	loadDeafultCubeMap();
+	this->loadDeafultCubeMap();
 	this->active = true;
 }
 
@@ -42,6 +42,10 @@ GLuint Texture::loadTexture(GLchar const *path) {
 
 void Texture::setActive(bool active){
 	this->active = active;
+}
+
+void Texture::setCubeMapTexture(GLuint texture){
+	this->cubemap_texture = texture;
 }
 
 bool * Texture::isActive(){

@@ -258,6 +258,8 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 
 	//-- Init Frame Buffer Object
 	this->frameBufferObject = new FrameBuffer();
+
+	this->clicked = false;
 }
 
 Stage::~Stage() {
@@ -267,15 +269,6 @@ Stage::~Stage() {
 void Stage::backRender(Camera* cam, Projection* proj){
 	//-- Render SkyBox
 	this->skyBox->render();
-
-	//-- Move Player
-	this->player->move();
-
-	//-- Move Camera
-	this->camera->move();
-
-	//-- Calculating Mouse Ray
-	this->mousePicker->calculateRay();
 
 	//-- Render the model collection and light collection
 	this->modelCollection->render(
@@ -323,7 +316,7 @@ void Stage::frontRender(){
 		"Blinn-Phong",
 		"Blinn-Phong",
 		"Blinn-Phong",
-		"Blinn-Phong",
+		"Blinn-Phong-With-Reflections",
 		"Blinn-Phong",
 		"Blinn-Phong",
 		"Blinn-Phong-With-Reflections" });
@@ -344,11 +337,9 @@ void Stage::initGLSLPrograms(){
 	//-- Structure to initialize
 	this->illuminationPrograms = new map<string, CGLSLProgram*>();
 	vector< map<string, string>* > *routes = new vector< map<string, string>* >({
-	//new map<string, string>({ { "name", "Phong" }, { "vertex", "../src/shaders/Phong.vert" }, { "fragment", "../src/shaders/Phong.frag" } } ),
-	new map<string, string>({ { "name", "Blinn-Phong" },{ "vertex", "../src/shaders/BlinnPhong.vert" }, { "fragment", "../src/shaders/BlinnPhong.frag" } }),
-	new map<string, string>({ { "name", "Blinn-Phong-With-Reflections" },{ "vertex", "../src/shaders/BlinnPhongReflections.vert" },{ "fragment", "../src/shaders/BlinnPhongReflections.frag" } })
-	//new map<string, string>({ { "name", "Oren-Nayar" },{ "vertex", "../src/shaders/Phong.vert" }, { "fragment", "../src/shaders/Phong.frag" } }),
-	//new map<string, string>({ { "name", "Cook-Torrance" },{ "vertex", "../src/shaders/Phong.vert" }, { "fragment", "../src/shaders/Phong.frag" } })
+		new map<string, string>({ { "name", "Blinn-Phong" },{ "vertex", "../src/shaders/BlinnPhong.vert" }, { "fragment", "../src/shaders/BlinnPhong.frag" } }),
+		new map<string, string>({ { "name", "Blinn-Phong-With-Reflections" },{ "vertex", "../src/shaders/BlinnPhongReflections.vert" },{ "fragment", "../src/shaders/BlinnPhongReflections.frag" } }),
+		new map<string, string>({ { "name", "Depth" },{ "vertex", "../src/shaders/Depth.vert" },{ "fragment", "../src/shaders/Depth.frag" } })
 	});
 
 	//-- Initialize Shader Programs
@@ -397,6 +388,7 @@ Model * Stage::getSelectedModel(){
 Model * Stage::getSelectedLight(){
 	//-- Cambiar por un arreglo de luces a futuro 03/02/17
 	//-- Hoy es el futuro, pero aun no se ha cambiado ni se va a cambiar 16/02/17
+	//-- Hoy es mucho después del futuro inclusive, y no tengo la esperanza de cambiarlo siquiera 24/02/2017
 	return this->lightCollection->getEntity(0);
 }
 
@@ -426,8 +418,31 @@ void Stage::Notify(string message, void* data) {
 	else if (message == "eventScroll")
 		this->camera->calculateZoom( *((int*)data) );
 	else if (message == "mouseButton") {
-		this->camera->calculatePitch(((int*)data)[0], ((int*)data)[1], ((int*)data)[2], ((int*)data)[3]);
-		this->camera->calculateAngleAroundPlayer(((int*)data)[0], ((int*)data)[1], ((int*)data)[2], ((int*)data)[3]);
+		if (((int*)data)[0] == GLFW_MOUSE_BUTTON_LEFT && ((int*)data)[1] == GLFW_PRESS && !this->clicked) {
+			//-- Save first click
+			this->clicked = true;
+			this->xPos = ((int*)data)[2];
+			this->yPos = ((int*)data)[3];
+			this->xPosFirst = this->xPos;
+			this->yPosFirst = this->yPos;
+
+			this->camera->calculatePitch(0, 0, 0, this->yPos);
+			this->camera->calculateAngleAroundPlayer(0, 0, this->xPos, 0);
+		}
+		else if (((int*)data)[0] == GLFW_MOUSE_BUTTON_LEFT && ((int*)data)[1] == GLFW_PRESS) {
+			//-- Updating click values
+			this->xPos = this->xPosFirst - ((int*)data)[2];
+			this->yPos = this->yPosFirst - ((int*)data)[3];
+			this->camera->calculatePitch(0, 0, 0, this->yPos);
+			this->camera->calculateAngleAroundPlayer(0, 0, this->xPos, 0);
+		}
+		else if (((int*)data)[0] == GLFW_MOUSE_BUTTON_LEFT && ((int*)data)[1] == GLFW_RELEASE) {
+			//-- Key released
+			this->clicked = false;
+		}
+
+		//this->camera->calculatePitch(((int*)data)[0], ((int*)data)[1], ((int*)data)[2], ((int*)data)[3]);
+		//this->camera->calculateAngleAroundPlayer(((int*)data)[0], ((int*)data)[1], ((int*)data)[2], ((int*)data)[3]);
 	}
 	/*
 	if (message == "Animate") {
@@ -437,25 +452,68 @@ void Stage::Notify(string message, void* data) {
 	}*/
 }
 
-void Stage::buildDynamicCubeMap(const int entityID){
-	this->modelCollection->getEntity(entityID)->isReflect(true);
-	Camera* aux_camera = new Camera(this->modelCollection->getEntity(entityID)->getBoundingBox()->getCenter(), 0.0f, 0.0f, vec3(0.0f, 1.0f, 0.0f));
+void Stage::buildDynamicCubeMap(const int entityID) {
+	this->modelCollection->getEntity(entityID)->isReflect(false);
+	Camera* aux_camera = new Camera(glm::vec3(16.3f, 4.0f, -6.7f), 0.0f, 0.0f, vec3(0.0f, 1.0f, 0.0f));
 	Projection* aux_projection = new Projection(90.0f, 1.0f, 1.0f, 1000.0f);
-	
+
+	this->modelCollection->getEntity(entityID)->getTexture()->setCubeMapTexture(this->frameBufferObject->getCubeMapColorTexture());
+	this->frameBufferObject->bindCubeMapFrameBuffer();
 	for (int i = 0; i < 6; i++){
-		this->frameBufferObject->bindCubeFrameBuffer();
+		this->frameBufferObject->activeCubeMapColorTexture(i);
 		this->switchFace(aux_camera, i);
 		this->backRender(aux_camera, aux_projection);
-		this->frameBufferObject->bindCubeMapTexture(
-			this->modelCollection->getEntity(entityID)->getTexture()->getCubeMapTexture(), i
-		);
-		this->frameBufferObject->unbindCurrentFrameBuffer();
-	}
 	
+	}
+	this->frameBufferObject->unbindCurrentFrameBuffer();
+	this->modelCollection->getEntity(entityID)->isReflect(true);
+}
+
+void Stage::buildShadowMap(){
+	// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+	/*glGenFramebuffers(1, &this->shadowMapId);
+	glBindFramebuffer(GL_FRAMEBUFFER, this->shadowMapId);
+
+	// Depth texture. Slower than a depth buffer, but you can sample it later in your shader
+	GLuint depthTexture;
+	glGenTextures(1, &depthTexture);
+	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture, 0);
+
+	glDrawBuffer(GL_NONE); // No color buffer is drawn to.*/
+
+	//-- render
+	//this->frameBufferObject->bindRefractionFrameBuffer();
+	glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
+
+	// Compute the MVP matrix from the light's point of view
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+	glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 depthModelMatrix = glm::mat4(1.0);
+	glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+
+	//-- Render the model collection and light collection
+	this->modelCollection->low_render(depthMVP, this->illuminationPrograms->at("Depth"));
+
+	//this->frameBufferObject->unbindCurrentFrameBuffer();
+
+	/*glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, 1440, 900);*/
+						   // Always check that our framebuffer is ok
+	/*if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		return false;*/
 }
 
 void Stage::render() {
 	//-- Build Necesary CubeMaps
 	this->buildDynamicCubeMap(8);
+	this->buildDynamicCubeMap(5);
+	//this->buildShadowMap();
 	this->frontRender();
 }

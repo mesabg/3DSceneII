@@ -28,6 +28,7 @@ public:
 
 	//-- Setters
 	void setActive(bool active);
+	void setCubeMapTexture(GLuint texture);
 
 	//-- Getter
 	bool* isActive();
