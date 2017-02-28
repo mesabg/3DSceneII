@@ -7,8 +7,6 @@ in vec3 o_toLight;
 in vec3 o_toCamera;
 in vec2 o_textureCoord;
 in float dist;
-in vec3 reflectedVector;
-in vec3 refractedVector;
 in vec4 ShadowCoord;
 
 //-- parameters of the light
@@ -53,15 +51,31 @@ uniform sampler2D u_texture;
 uniform sampler2D shadowMap;
 uniform samplerCube u_cube_map;
 
-
-float attenuation = 1.0;
-
 //-- Out Value
 out vec4 resultingColor;
 
 
-float CalculateAttenuation(){
-	return 1.0;
+float CalculateAttenuation(in vec3 N, in vec3 L, in Light light, in float dist){
+    float NdotL = max(dot(N,L), 0.0);
+
+    //-- Directional
+    float directional = 1.0;
+
+    //-- Point Light
+    float point_light = 0.0;
+    if ( NdotL > 0.0 )
+        point_light = 1.0 / (light.constant + light.linear*dist + light.quadratic*dist*dist);
+
+    //-- Spot Light
+    float spot_effect = dot(normalize(light.direction), normalize(-L));
+    float spot_light = 0.0;
+    if ( NdotL > 0.0 )
+        if (spot_effect > light.cosCutOff){
+            spot_effect = pow(spot_effect, light.exponent);
+            spot_light = spot_effect / (light.constant + light.linear*dist + light.quadratic*dist*dist);
+        }
+
+	return light.type.x*directional + light.type.y*point_light + light.type.y*spot_light;
 }
 
 
@@ -84,7 +98,7 @@ vec3 specularLightingBlinn(in vec3 N, in vec3 L, in vec3 V){
    if(dot(N, L) > 0){
       // -- half vector
       vec3 H = normalize(L + V);
-      specularTerm = CalculateAttenuation() * max(pow(dot(N, H), u_material.shininess),0.0);
+      specularTerm = max(pow(dot(N, H), u_material.shininess),0.0);
    }
 
    return specularTerm * u_material.specular * u_light[0].specular;
@@ -96,8 +110,9 @@ vec4 calculateBlinnPhong(void) {
    vec3 L = normalize(o_toLight); 
    vec3 N = normalize(o_normal);
    vec3 V = normalize(o_toCamera);
-   vec3 R = normalize(reflect(L, N));
-   vec4 BlinnPhongColor;
+   float NdotL = max(dot(N,L), 0.0);
+   float attenuation = CalculateAttenuation(N, L, u_light[0], dist);
+   vec3 BlinnPhongColor = vec3(0.0);
 
    //-- get Blinn-Phong reflectance components
    vec3 Iamb = ambientLighting();
@@ -105,9 +120,11 @@ vec4 calculateBlinnPhong(void) {
    vec3 Ispe = specularLightingBlinn(N, L, V);
 
    //-- combination of all components and diffuse color of the object
-   BlinnPhongColor.xyz = Iamb + Idif + Ispe;
-   BlinnPhongColor.a = 1.0;
-   return BlinnPhongColor;
+   if (NdotL > 0.0)
+    BlinnPhongColor = Iamb + attenuation*Idif + attenuation*Ispe;
+
+   //-- Calculate Attenuation Depending on the light type
+   return vec4(BlinnPhongColor, 1.0);
 } 
 
 
@@ -115,19 +132,23 @@ vec4 calculateBlinnPhong(void) {
 
 void main(void){
 	vec4 BlinnPhong = calculateBlinnPhong();
-	resultingColor = mix(BlinnPhong, texture(u_texture, o_textureCoord), 0.5);
+	resultingColor = mix(BlinnPhong, texture(u_texture, o_textureCoord), 0.7);
 
-	vec4 reflectedColor = texture(u_cube_map, reflectedVector);
-	vec4 refractedColor = texture(u_cube_map, refractedVector);
-	vec4 enviroColor = mix(reflectedColor, refractedColor, 0.5);
+    //-- Solving aliasing problem
+    vec2 poissonDisk[4] = vec2[](
+        vec2( -0.94201624, -0.39906216 ),
+        vec2( 0.94558609, -0.76890725 ),
+        vec2( -0.094184101, -0.92938870 ),
+        vec2( 0.34495938, 0.29387760 )
+    );
 
-	resultingColor = mix(resultingColor, enviroColor, 1.0);
-
-	float bias = 0.005;
+    float bias = 0.005;
 	float visibility = 1.0;
-	if ( texture( shadowMap, ShadowCoord.xy ).z  <  ShadowCoord.z-bias){
-		visibility = 0.2;
-	}
+	for (int i=0;i<4;i++){
+        if ( texture( shadowMap, ShadowCoord.xy + poissonDisk[i]/700.0 ).z  <  ShadowCoord.z-bias ){
+            visibility-=0.2;
+        }
+    }
 
 	vec4 shadowColor = visibility * resultingColor;
     resultingColor = mix (resultingColor, shadowColor, 0.6);

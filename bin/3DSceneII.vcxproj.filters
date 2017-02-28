@@ -229,5 +229,20 @@
     <None Include="..\src\shaders\Depth.vert">
       <Filter>Shaders\Vertex</Filter>
     </None>
+    <None Include="..\src\shaders\texture.frag">
+      <Filter>Shaders\Fragment</Filter>
+    </None>
+    <None Include="..\src\shaders\texture.vert">
+      <Filter>Shaders\Vertex</Filter>
+    </None>
+    <None Include="..\src\shaders\byFragmentLightning.frag">
+      <Filter>Shaders\Fragment</Filter>
+    </None>
+    <None Include="..\src\shaders\BlinnPhongShadow.frag">
+      <Filter>Shaders\Fragment</Filter>
+    </None>
+    <None Include="..\src\shaders\BlinnPhongShadow.vert">
+      <Filter>Shaders\Vertex</Filter>
+    </None>
   </ItemGroup>
 </Project>

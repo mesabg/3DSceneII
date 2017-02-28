@@ -27,6 +27,9 @@ ConcreteRenderController::ConcreteRenderController(const float width, const floa
 	//-- Reshape screen
 	this->gui->reshape(this->gui->getWindow(), (int)width, (int)height);
 	this->sideBar->reshape((int)width, (int)height);
+	//glfwWindowHint(GLFW_SAMPLES, 4);
+	//this->otherWindow = glfwCreateWindow(1440, 900, "TestTextures", NULL, NULL);
+	//glewInit();
 }
 
 ConcreteRenderController::~ConcreteRenderController() {
@@ -66,6 +69,9 @@ void ConcreteRenderController::Send(string message, void* data, RenderColleague*
 	//-- Animation
 	if (message == "Animate" && renderColleague == this->sideBar)
 		this->stage->Notify(message, data);
+
+	if (message == "texId" && renderColleague == this->stage)
+		this->idTex = *((GLuint*)(data));
 }
 
 void ConcreteRenderController::render() {
@@ -77,10 +83,6 @@ void ConcreteRenderController::render() {
 
 	//-- Update Side Bar
 	this->sideBar->update();
-
-	double currentFrameTime = getCurrentTime();
-	delta = (currentFrameTime - lastFrameTime)/1000.0f;
-	lastFrameTime = currentFrameTime;
 }
 
 void ConcreteRenderController::initGLSLPrograms() {
@@ -98,9 +100,16 @@ double ConcreteRenderController::getFrameTimeSeconds(){
 
 int ConcreteRenderController::infinity() {
 	while (!glfwWindowShouldClose(this->gui->getWindow())) {
+		//-- GUI Buffers Update
+		this->gui->activePrimaryWindow();
+		glfwPollEvents();
 		this->render();
 		glfwSwapBuffers(this->gui->getWindow());
-		glfwPollEvents();
+
+		//-- Updating current time
+		double currentFrameTime = getCurrentTime();
+		delta = (currentFrameTime - lastFrameTime) / 1000.0f;
+		lastFrameTime = currentFrameTime;
 	}
 	return EXIT_SUCCESS;
 }

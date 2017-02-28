@@ -16,6 +16,9 @@ using std::string;
 using glm::vec2;
 using glm::mat4;
 
+//-- Externs
+extern vec2 getDisplaySize();
+
 class FrameBuffer {
 private:
 	//-- Variables
@@ -80,6 +83,8 @@ public:
 	//-- Functions
 	void bindImageFrameBuffer();
 	void bindCubeMapFrameBuffer();
+	void activeImageColorTexture();
+	void activeImageDepthTexture();
 	void activeCubeMapColorTexture(const int face);
 	void activeCubeMapDepthTexture(const int face);
 	void unbindCurrentFrameBuffer();

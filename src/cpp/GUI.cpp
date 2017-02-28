@@ -1,8 +1,10 @@
 #include <GUI.h>
 #include <iostream>
+using namespace std;
 
 GUI* GUI::uniqueGUI = NULL;
 GLFWwindow* GUI::gWindow = NULL;
+GLFWwindow* GUI::gSecondWindow = NULL;
 int GUI::gWidth = 1440;
 int GUI::gHeight = 900;
 
@@ -62,6 +64,10 @@ GLFWwindow * GUI::getWindow() {
 	return GUI::gWindow;
 }
 
+GLFWwindow * GUI::getSecondaryWindow(){
+	return GUI::gSecondWindow;
+}
+
 void GUI::setSize(const float width, const float height) {
 	reshape(GUI::gWindow, (int)width, (int)height);
 }
@@ -99,6 +105,7 @@ bool GUI::initGlfw() {
 	glfwSetMouseButtonCallback(GUI::gWindow, mouseButton);
 	glfwSetCursorPosCallback(GUI::gWindow, cursorPos);
 	glfwSetScrollCallback(GUI::gWindow, scrollCallback);
+	glfwSetCharCallback(GUI::gWindow, charCallback);
 
 	return true;
 }
@@ -149,7 +156,17 @@ void GUI::scrollCallback(GLFWwindow * window, double mod, double scroll) {
 	localUserInterface->renderController->Send("eventScroll", (void*)&scroll_value, localUserInterface);
 }
 
+void GUI::charCallback(GLFWwindow * window, unsigned int scanChar){
+	if (TwEventCharGLFW(scanChar, GLFW_PRESS)) return;
+}
 
+void GUI::activePrimaryWindow(){
+	glfwMakeContextCurrent(GUI::gWindow);
+}
+
+void GUI::activeSecondaryWindow() {
+	glfwMakeContextCurrent(GUI::gSecondWindow);
+}
 
 //-- Mouse Class
 vec2 Mouse::position = vec2();

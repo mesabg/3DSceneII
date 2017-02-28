@@ -184,10 +184,15 @@
     <None Include="..\src\shaders\BlinnPhong.vert" />
     <None Include="..\src\shaders\BlinnPhongReflections.frag" />
     <None Include="..\src\shaders\BlinnPhongReflections.vert" />
+    <None Include="..\src\shaders\BlinnPhongShadow.frag" />
+    <None Include="..\src\shaders\BlinnPhongShadow.vert" />
+    <None Include="..\src\shaders\byFragmentLightning.frag" />
     <None Include="..\src\shaders\Depth.frag" />
     <None Include="..\src\shaders\Depth.vert" />
     <None Include="..\src\shaders\Skybox.frag" />
     <None Include="..\src\shaders\Skybox.vert" />
+    <None Include="..\src\shaders\texture.frag" />
+    <None Include="..\src\shaders\texture.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

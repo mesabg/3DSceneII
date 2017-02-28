@@ -18,6 +18,10 @@ private:
 	CGLSLProgram* illuminationProgram, *illuminationProgram2;
 	SideBar* sideBar;
 	map<string, CGLSLProgram*> *illuminationPrograms;
+	GLFWwindow* otherWindow;
+	GLuint idTex, planeVAO, planeVBO;
+	CGLSLProgram texture_program;
+	glm::mat4 model, view, projection;
 
 	//-- Selected Values
 	int selectedLight;

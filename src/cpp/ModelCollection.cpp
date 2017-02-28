@@ -62,6 +62,13 @@ void ModelCollection::setReflectionMap(vector<bool> reflectionMap){
 	this->reflectionMap = reflectionMap;
 }
 
+void ModelCollection::setShadow(glm::mat4 depthBiasMVP, GLuint ShadowMapId){
+	for (Model* model : this->entities) {
+		model->setDepthBiasMVP(depthBiasMVP);
+		model->setShadowMapId(ShadowMapId);
+	}
+}
+
 Model * ModelCollection::getEntity(const unsigned int index){
 	return this->entities[index];
 }

@@ -14,6 +14,7 @@
 
 extern unsigned int amountOfEntities;
 extern unsigned int amountOfLights;
+extern vec2 getDisplaySize();
 
 class Stage : public RenderColleague
 {
@@ -35,6 +36,12 @@ private:
 	float height;
 	float* selectedModel;
 	float* selectedLight;
+	GLuint idTex, planeVAO, planeVBO;
+	CGLSLProgram texture_program;
+	glm::mat4 modelo, vista, proyeccion;
+	GLuint fboId, rboId;
+	GLuint textureId;
+	bool isDonePrint = false;
 
 	//-- Button Click variables
 	bool clicked;
@@ -57,9 +64,9 @@ private:
 	Stage(RenderController* renderController);
 	~Stage();
 	void backRender(Camera* cam, Projection* proj);
-	void frontRender();
+	
 public:
-
+	void frontRender();
 	/*Get Instance*/
 	static Stage* Instance(RenderController* renderController);
 	static void Destroy();
@@ -82,6 +89,7 @@ public:
 
 	//-- Build Shadow Map
 	void buildShadowMap();
+	void drawShadowMap();
 
 	/*Functions*/
 	void render();

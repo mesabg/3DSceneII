@@ -18,7 +18,7 @@ Light::Light(vec3 position, vec3 ambient, vec3 diffuse, vec3 specular) {
 	this->ambient = ambient;
 	this->diffuse = diffuse;
 	this->specular = specular;
-	this->direction = vec3(0.1f, -0.7f, -0.08f);
+	this->direction = vec3(0.50f, 0.10f, -0.40f);
 	this->attenuation = vec3(0.0009f, 0.0008f, 0.0007f);
 	this->isActive = true;
 	this->type = vec3(true, false, false);

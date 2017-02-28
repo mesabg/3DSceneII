@@ -126,6 +126,8 @@ void Model::bindData(Projection* projection, Camera* camera, vector<Light*> *glo
 		this->shading.y,
 		this->shading.z,
 		this->shading.w);
+
+	glUniformMatrix4fv(glGetUniformLocation(this->shaderProgram->getProgramID(), "DepthBiasMVP"), 1, GL_FALSE, &(this->DepthBiasMVP)[0][0]);
 }
 
 void Model::drawElements(){
@@ -142,6 +144,10 @@ void Model::drawElements(){
 		glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->getCubeMapTexture());
 		glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_cube_map"), 1);
 	}
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, this->ShadowMapId);
+	glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "shadowMap"), 2);
 
 	// -- VBO Data
 	glBindBuffer(GL_ARRAY_BUFFER, this->glVBO_dir);
@@ -206,6 +212,13 @@ Model::~Model() {
 
 void Model::render(Projection* projection, Camera* camera, vector<Light*> *globalLights) {
 	this->shaderProgram->enable();
+	//-- State machine activate
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 	if (this->animation) this->animation->animate();
 	this->boundingBox->move(this->transformation->getTransformMatrix());
 	this->bindData(projection, camera, globalLights);
@@ -215,7 +228,17 @@ void Model::render(Projection* projection, Camera* camera, vector<Light*> *globa
 
 void Model::lowRender(glm::mat4 depthMVP){
 	this->shaderProgram->enable();
+	//-- State machine activate
+	
+	/*glEnable(GL_DEPTH_TEST);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);*/
+
 	glUniformMatrix4fv(glGetUniformLocation(this->shaderProgram->getProgramID(),"depthMVP"), 1, GL_FALSE, &depthMVP[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_model_matrix"), 1, GL_FALSE, &(this->transformation->getTransformMatrix())[0][0]);
 	// -- VBO Data
 	glBindBuffer(GL_ARRAY_BUFFER, this->glVBO_dir);
 	// -- Vertex 
@@ -341,6 +364,14 @@ void Model::setSkyBox(SkyBox * skybox){
 
 void Model::isReflect(bool isReflected){
 	this->isReflected = isReflected;
+}
+
+void Model::setShadowMapId(const GLuint ShadowMapId){
+	this->ShadowMapId = ShadowMapId;
+}
+
+void Model::setDepthBiasMVP(const glm::mat4 DepthBiasMVP){
+	this->DepthBiasMVP = DepthBiasMVP;
 }
 
 void Model::Inherit(Model * model) {

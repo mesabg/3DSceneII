@@ -43,9 +43,9 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsLight[0] = (new Light(
 		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
-		vec3(0.5f, 0.3f, 0.2f), 
-		vec3(0.2f, 0.1f, 0.2f), 
-		vec3(1.0f, 1.0f, 1.0f)
+		vec3(0.3f),
+		vec3(0.4f),
+		vec3(0.5f)
 	));
 	modelsMaterialProperties[0] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
@@ -61,9 +61,9 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsLight[1] = (new Light(
 		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
-		vec3(0.431f, 0.0f, 0.0f),
-		vec3(1.0f, 0.098f, 0.0f),
-		vec3(0.392f, 0.588f, 0.098f)
+		vec3(0.5f),
+		vec3(0.5f),
+		vec3(0.5f)
 	));
 	modelsMaterialProperties[1] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
@@ -80,9 +80,9 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsLight[2] = (new Light(
 		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
-		vec3(0.5f, 0.3f, 0.2f),
-		vec3(0.2f, 0.1f, 0.2f),
-		vec3(0.25f, 0.0f, 0.2f)
+		vec3(0.149f, 0.094f, 0.082f),
+		vec3(0.404f, 0.251f, 0.227f),
+		vec3(0.553f, 0.435f, 0.42f)
 	));
 	modelsMaterialProperties[2] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
@@ -99,9 +99,9 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsLight[3] = (new Light(
 		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
-		vec3(0.51f, 1.0f, 0.196f),
-		vec3(1.0f, 0.902f, 0.196f),
-		vec3(0.51f, 0.902f, 0.196f)
+		vec3(0.0f, 0.0f, 0.0f),
+		vec3(0.757f, 0.604f, 0.42f),
+		vec3(0.8f, 0.8f, 0.8f)
 	));
 	modelsMaterialProperties[3] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
@@ -118,9 +118,9 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsLight[4] = (new Light(
 		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
-		vec3(0.51f, 1.0f, 0.196f),
-		vec3(1.0f, 0.902f, 0.196f),
-		vec3(0.51f, 0.902f, 0.196f)
+		vec3(0.0f, 0.0f, 0.0f),
+		vec3(0.757f, 0.604f, 0.42f),
+		vec3(0.8f, 0.8f, 0.8f)
 	));
 	modelsMaterialProperties[4] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
@@ -137,9 +137,9 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsLight[5] = (new Light(
 		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
-		vec3(0.51f, 1.0f, 0.196f),
-		vec3(1.0f, 0.902f, 0.196f),
-		vec3(0.51f, 0.902f, 0.196f)
+		vec3(0.0f, 0.0f, 0.0f),
+		vec3(0.757f, 0.604f, 0.42f),
+		vec3(0.8f, 0.8f, 0.8f)
 	));
 	modelsMaterialProperties[5] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
@@ -156,9 +156,9 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsLight[6] = (new Light(
 		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
-		vec3(0.51f, 1.0f, 0.196f),
-		vec3(1.0f, 0.902f, 0.196f),
-		vec3(0.51f, 0.902f, 0.196f)
+		vec3(0.0f, 0.0f, 0.0f),
+		vec3(0.757f, 0.604f, 0.42f),
+		vec3(0.8f, 0.8f, 0.8f)
 	));
 	modelsMaterialProperties[6] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
@@ -175,9 +175,9 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsLight[7] = (new Light(
 		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
-		vec3(0.51f, 1.0f, 0.196f),
-		vec3(1.0f, 0.902f, 0.196f),
-		vec3(0.51f, 0.902f, 0.196f)
+		vec3(0.0f, 0.0f, 0.0f),
+		vec3(0.757f, 0.604f, 0.42f),
+		vec3(0.8f, 0.8f, 0.8f)
 	));
 	modelsMaterialProperties[7] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
@@ -194,9 +194,9 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsLight[8] = (new Light(
 		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
-		vec3(0.51f, 1.0f, 0.196f),
-		vec3(1.0f, 0.902f, 0.196f),
-		vec3(0.51f, 0.902f, 0.196f)
+		vec3(0.0f, 0.0f, 0.0f),
+		vec3(0.757f, 0.604f, 0.42f),
+		vec3(0.8f, 0.8f, 0.8f)
 	));
 	modelsMaterialProperties[8] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
@@ -219,15 +219,15 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	lightsTransform[0] = (new Transformation(
 		/*Scale*/			1.0f,
-		/*Position*/		vec3(16.0f, 18.5f, -6.8f),
+		/*Position*/		vec3(2.9f, 18.5f, -7.70f),
 		/*Angle*/			0.0f,
 		/*Rot Direction*/	glm::vec3(0.0f, 1.0f, 0.0f)
 	));
 	lightsLight[0] = (new Light(
-		vec3(16.0f, 18.5f, -6.8f), 
-		vec3(0.392f, 0.0f, 0.0f), 
+		vec3(2.9f, 18.5f, -7.70f), 
+		vec3(1.0f, 1.0f, 1.0f),
 		vec3(1.0f, 1.0f, 1.0f), 
-		vec3(0.333f, 0.333f, 0.333f)
+		vec3(1.0f, 1.0f, 1.0f)
 	));
 	lightsMaterialProperties[0] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
@@ -244,12 +244,12 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	this->mousePicker = new MousePicker(this->camera, this->projection);
 
 	this->skyBox = new SkyBox({ 
-		"../sky/space/right.png", 
-		"../sky/space/left.png", 
-		"../sky/space/up.png",
-		"../sky/space/down.png", 
-		"../sky/space/back.png",
-		"../sky/space/front.png"}, 
+		"../sky/down-under/right.tga", 
+		"../sky/down-under/left.tga", 
+		"../sky/down-under/up.tga",
+		"../sky/down-under/down.tga", 
+		"../sky/down-under/back.tga",
+		"../sky/down-under/front.tga"}, 
 		this->projection->getProjection(), 
 		this->camera->getView());
 
@@ -260,6 +260,45 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	this->frameBufferObject = new FrameBuffer();
 
 	this->clicked = false;
+
+	GLfloat planeVertex[] =
+	{
+		4.6f, 2.0f, 0.0f, 1.0f, 0.0f,
+		2.0f, 4.6f, 0.0f, 0.0f, 1.0f,
+		2.0f, 2.0f, 0.0f, 0.0f, 0.0f,
+
+		4.6f, 2.0f, 0.0f, 1.0f, 0.0f,
+		4.6f, 4.6f, 0.0f, 1.0f, 1.0f,
+		2.0f, 4.6f, 0.0f, 0.0f, 1.0f
+	};
+
+	glGenVertexArrays(1, &planeVAO);
+	glGenBuffers(1, &planeVBO);
+	glBindVertexArray(planeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertex), &planeVertex, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glBindVertexArray(0);
+
+	texture_program.loadShader("../src/shaders/texture.vert", CGLSLProgram::VERTEX);
+	texture_program.loadShader("../src/shaders/texture.frag", CGLSLProgram::FRAGMENT);
+
+	texture_program.create_link();
+
+	texture_program.enable();
+
+	texture_program.addAttribute("position");
+	texture_program.addAttribute("texcoord");
+
+	texture_program.addUniform("projection");
+	texture_program.addUniform("view");
+	texture_program.addUniform("model");
+	texture_program.addUniform("texture1");
+
+	texture_program.disable();
 }
 
 Stage::~Stage() {
@@ -311,14 +350,14 @@ void Stage::frontRender(){
 		this->camera,
 		this->lightCollection->getLightSet(),
 		this->illuminationPrograms,
-		{ "Blinn-Phong",
-		"Blinn-Phong",
-		"Blinn-Phong",
-		"Blinn-Phong",
-		"Blinn-Phong",
+		{ "Blinn-Phong-With-Shadow",
+		"Blinn-Phong-With-Shadow",
+		"Blinn-Phong-With-Shadow",
+		"Blinn-Phong-With-Shadow",
+		"Blinn-Phong-With-Shadow",
 		"Blinn-Phong-With-Reflections",
-		"Blinn-Phong",
-		"Blinn-Phong",
+		"Blinn-Phong-With-Shadow",
+		"Blinn-Phong-With-Shadow",
 		"Blinn-Phong-With-Reflections" });
 	this->lightCollection->render(
 		this->projection,
@@ -338,6 +377,7 @@ void Stage::initGLSLPrograms(){
 	this->illuminationPrograms = new map<string, CGLSLProgram*>();
 	vector< map<string, string>* > *routes = new vector< map<string, string>* >({
 		new map<string, string>({ { "name", "Blinn-Phong" },{ "vertex", "../src/shaders/BlinnPhong.vert" }, { "fragment", "../src/shaders/BlinnPhong.frag" } }),
+		new map<string, string>({ { "name", "Blinn-Phong-With-Shadow" },{ "vertex", "../src/shaders/BlinnPhongShadow.vert" },{ "fragment", "../src/shaders/BlinnPhongShadow.frag" } }),
 		new map<string, string>({ { "name", "Blinn-Phong-With-Reflections" },{ "vertex", "../src/shaders/BlinnPhongReflections.vert" },{ "fragment", "../src/shaders/BlinnPhongReflections.frag" } }),
 		new map<string, string>({ { "name", "Depth" },{ "vertex", "../src/shaders/Depth.vert" },{ "fragment", "../src/shaders/Depth.frag" } })
 	});
@@ -454,7 +494,7 @@ void Stage::Notify(string message, void* data) {
 
 void Stage::buildDynamicCubeMap(const int entityID) {
 	this->modelCollection->getEntity(entityID)->isReflect(false);
-	Camera* aux_camera = new Camera(glm::vec3(16.3f, 4.0f, -6.7f), 0.0f, 0.0f, vec3(0.0f, 1.0f, 0.0f));
+	Camera* aux_camera = new Camera(*(this->modelCollection->getEntity(entityID)->getTransformation()->getPosition()), 0.0f, 0.0f, vec3(0.0f, 1.0f, 0.0f));
 	Projection* aux_projection = new Projection(90.0f, 1.0f, 1.0f, 1000.0f);
 
 	this->modelCollection->getEntity(entityID)->getTexture()->setCubeMapTexture(this->frameBufferObject->getCubeMapColorTexture());
@@ -470,50 +510,58 @@ void Stage::buildDynamicCubeMap(const int entityID) {
 }
 
 void Stage::buildShadowMap(){
-	// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-	/*glGenFramebuffers(1, &this->shadowMapId);
-	glBindFramebuffer(GL_FRAMEBUFFER, this->shadowMapId);
-
-	// Depth texture. Slower than a depth buffer, but you can sample it later in your shader
-	GLuint depthTexture;
-	glGenTextures(1, &depthTexture);
-	glBindTexture(GL_TEXTURE_2D, depthTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture, 0);
-
-	glDrawBuffer(GL_NONE); // No color buffer is drawn to.*/
-
-	//-- render
-	//this->frameBufferObject->bindRefractionFrameBuffer();
-	glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
-
+	glm::vec3 lightInvDir = (*(this->lightCollection->getEntity(0)->getMaterialLight()->getPosition()));
 	// Compute the MVP matrix from the light's point of view
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-	glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-25, 25, -25, 25, -20, 60);
+	glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 10), glm::vec3(0, 1, 0));
 	glm::mat4 depthModelMatrix = glm::mat4(1.0);
 	glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-
-	//-- Render the model collection and light collection
+	this->frameBufferObject->bindImageFrameBuffer();
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
 	this->modelCollection->low_render(depthMVP, this->illuminationPrograms->at("Depth"));
+	this->frameBufferObject->unbindCurrentFrameBuffer();
 
-	//this->frameBufferObject->unbindCurrentFrameBuffer();
 
-	/*glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, 1440, 900);*/
-						   // Always check that our framebuffer is ok
-	/*if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		return false;*/
+	glm::mat4 biasMatrix(
+		0.5, 0.0, 0.0, 0.0,
+		0.0, 0.5, 0.0, 0.0,
+		0.0, 0.0, 0.5, 0.0,
+		0.5, 0.5, 0.5, 1.0
+	);
+	glm::mat4 depthBiasMVP = biasMatrix*depthMVP;
+	this->modelCollection->setShadow(depthBiasMVP, this->frameBufferObject->getImageDepthTexture());
+}
+
+void Stage::drawShadowMap(){
+	texture_program.enable();
+	modelo = glm::translate(glm::vec3(2.5f, -0.2f, 0.0f));
+	vista = glm::lookAt(vec3(0.0f, 0.0f, 8.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	proyeccion = glm::perspective(45.0f, (float)getDisplaySize().x / (float)getDisplaySize().y, 0.1f, 1000.0f);
+
+	glUniformMatrix4fv(texture_program.getLocation("model"), 1, GL_FALSE, value_ptr(modelo));
+	glUniformMatrix4fv(texture_program.getLocation("view"), 1, GL_FALSE, value_ptr(vista));
+	glUniformMatrix4fv(texture_program.getLocation("projection"), 1, GL_FALSE, value_ptr(proyeccion));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, this->frameBufferObject->getImageDepthTexture());
+	glUniform1i(texture_program.getLocation("texture1"), 0);
+
+	glBindVertexArray(planeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+	texture_program.disable();
 }
 
 void Stage::render() {
 	//-- Build Necesary CubeMaps
 	this->buildDynamicCubeMap(8);
 	this->buildDynamicCubeMap(5);
-	//this->buildShadowMap();
+	this->buildShadowMap();
 	this->frontRender();
+	this->drawShadowMap();
 }

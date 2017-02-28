@@ -129,7 +129,14 @@ SkyBox::~SkyBox() {
 
 void SkyBox::render(){
 	this->shader->enable();
-	
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+
 	//-- Bind Uniforms
 	mat4 _view = *(this->view);
 	mat4 _projection = *(this->projection);

@@ -66,6 +66,8 @@ protected:
 	//-- Light material values
 	Light* material;
 	MaterialProperties* materialProperties;
+	GLuint ShadowMapId;
+	glm::mat4 DepthBiasMVP;
 
 	//-- Uniforms IDs
 	vector<GLint> *ID;
@@ -115,6 +117,8 @@ public:
 	void setShader(CGLSLProgram* shader);
 	void setSkyBox(SkyBox* skybox);
 	void isReflect(bool isReflected);
+	void setShadowMapId(const GLuint ShadowMapId);
+	void setDepthBiasMVP(const glm::mat4 DepthBiasMVP);
 
 	//-- Inherit
 	void Inherit(Model* model);

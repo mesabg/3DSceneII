@@ -44,6 +44,7 @@ public:
 	void initVBOs();
 	void setSkyBox(SkyBox* skybox);
 	void setReflectionMap(vector<bool> reflectionMap);
+	void setShadow(glm::mat4 depthBiasMVP, GLuint ShadowMapId);
 
 	//-- Getter
 	Model* getEntity(const unsigned int index);

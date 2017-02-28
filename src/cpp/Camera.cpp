@@ -24,7 +24,7 @@ void Camera::calculateCameraPossition(float horizontalDistance, float verticalDi
 	float offsetZ = horizontalDistance * glm::cos(glm::radians(theta));
 
 	this->position.x = /*this->player->getPosition().x*/ 0.0f - offsetX;
-	this->position.z = /*this->player->getPosition().z*/ 0.0f - offsetZ;
+	this->position.z = /*this->player->getPosition().z*/ 8.0f - offsetZ;
 	this->position.y = /*this->player->getPosition().y*/ 6.0f + verticalDistance;
 	//this->target = /*this->position - */this->player->getPosition();
 
@@ -48,7 +48,7 @@ Camera::Camera() {
 }
 
 Camera::Camera(Transformation * player){
-	this->position = vec3(3.0f, 3.0f, 10.0f);
+	this->position = vec3(0.0f, 0.0f, 20.0f);
 	this->target = vec3(0.0f, 0.0f, -1.0f);
 	this->up = vec3(0.0f, 1.0f, 0.0f);
 	this->player = player;

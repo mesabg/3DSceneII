@@ -4,8 +4,8 @@ using namespace std;
 
 FrameBuffer::FrameBuffer(){
 	//-- Sizes
-	this->IMAGE_WIDTH = 320;
-	this->IMAGE_HEIGHT = 180;
+	this->IMAGE_WIDTH = 1024;
+	this->IMAGE_HEIGHT = 1024;
 	this->CUBEMAP_WIDTH = 128;
 	this->CUBEMAP_HEIGHT = 128;
 
@@ -141,6 +141,24 @@ void FrameBuffer::bindCubeMapFrameBuffer() {
 	bindCubeMapFrameBuffer(this->cubeMapFrameBuffer, this->CUBEMAP_WIDTH, this->CUBEMAP_HEIGHT);
 }
 
+void FrameBuffer::activeImageColorTexture(){
+	glFramebufferTexture2D(
+		GL_FRAMEBUFFER,
+		GL_COLOR_ATTACHMENT0,
+		GL_RGB,
+		this->imageColorTexture,
+		0);
+}
+
+void FrameBuffer::activeImageDepthTexture(){
+	glFramebufferTexture2D(
+		GL_FRAMEBUFFER,
+		GL_DEPTH_ATTACHMENT,
+		GL_RGB,
+		this->imageDepthTexture,
+		0);
+}
+
 void FrameBuffer::activeCubeMapColorTexture(const int face){
 	glFramebufferTexture2D(
 		GL_FRAMEBUFFER,
@@ -161,12 +179,12 @@ void FrameBuffer::activeCubeMapDepthTexture(const int face){
 
 void FrameBuffer::unbindCurrentFrameBuffer(){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, 1440, 900);
+	glViewport(0, 0, (int)getDisplaySize().x, (int)getDisplaySize().y);
 }
 
 void FrameBuffer::initialiseImageFrameBuffer(){
 	this->imageFrameBuffer = createFrameBuffer();
-	this->imageDepthBuffer = createDepthBufferAttachment(this->IMAGE_WIDTH, this->IMAGE_HEIGHT);
+	//this->imageDepthBuffer = createDepthBufferAttachment(this->IMAGE_WIDTH, this->IMAGE_HEIGHT);
 	this->imageColorTexture = createImageColorTextureAttachment(this->IMAGE_WIDTH, this->IMAGE_HEIGHT);
 	this->imageDepthTexture = createImageDepthTextureAttachment(this->IMAGE_WIDTH, this->IMAGE_HEIGHT);
 	this->unbindCurrentFrameBuffer();
@@ -189,6 +207,8 @@ void FrameBuffer::bindCubeMapFrameBuffer(const GLuint frameBuffer, const int wid
 void FrameBuffer::bindImageFrameBuffer(const GLuint frameBuffer, const int width, const int height){
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->imageDepthTexture, 0);
 	glViewport(0, 0, width, height);
 }
 
@@ -198,6 +218,7 @@ GLuint FrameBuffer::createFrameBuffer(){
 	glGenFramebuffers(1, &frameBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	//glDrawBuffer(GL_NONE);
 	return frameBuffer;
 }
 
@@ -234,9 +255,12 @@ GLuint FrameBuffer::createImageDepthTextureAttachment(const int width, const int
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
+	glDrawBuffer(GL_NONE);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return texture;
 }
