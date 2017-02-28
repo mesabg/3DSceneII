@@ -3,6 +3,14 @@
 Routes::Routes(string model, string texture) {
 	this->model = model;
 	this->texture = texture;
+	this->isNormalMapped = false;
+}
+
+Routes::Routes(string model, vector<string> textureRoutes){
+	this->model = model;
+	this->texture = textureRoutes[0];
+	this->normalTexture = textureRoutes[1];
+	this->isNormalMapped = true;
 }
 
 Routes::Routes() {

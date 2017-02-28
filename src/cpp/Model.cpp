@@ -139,7 +139,6 @@ void Model::drawElements(){
 	//-- Bind MipMap From the SkyBox if its necesary
 	if (this->isReflected) {
 		//-- Calculate dynamic MipMapping
-		//this->skyboxReference->enable(this->shaderProgram->getProgramID(), 1);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->getCubeMapTexture());
 		glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_cube_map"), 1);
@@ -149,14 +148,23 @@ void Model::drawElements(){
 	glBindTexture(GL_TEXTURE_2D, this->ShadowMapId);
 	glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "shadowMap"), 2);
 
+	//-- Normal Mapping Texture
+	if (this->routes->isNormalMapped) {
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, this->normalTexture->getID());
+		glUniform1i(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_normal_texture"), 3);
+	}
+
 	// -- VBO Data
 	glBindBuffer(GL_ARRAY_BUFFER, this->glVBO_dir);
 	// -- Vertex 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), 0);
-	// -- Normals
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
-	// -- Texture Coord
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), 0);
+	// -- Normals								
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));//6
+	// -- Texture Coord								
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));//3
+	//-- Tangents								
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (void*)(9 * sizeof(GLfloat)));//9
 
 	// -- Drawing
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->glVBO_indexes_dir);
@@ -242,7 +250,7 @@ void Model::lowRender(glm::mat4 depthMVP){
 	// -- VBO Data
 	glBindBuffer(GL_ARRAY_BUFFER, this->glVBO_dir);
 	// -- Vertex 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), 0);
 
 	// -- Drawing
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->glVBO_indexes_dir);
@@ -402,6 +410,9 @@ void Model::initGLDataBinding() {
 
 		// -- Texture Coord
 		glEnableVertexAttribArray(2);
+
+		//-- Tangents
+		glEnableVertexAttribArray(3);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
@@ -413,6 +424,8 @@ void Model::initGLDataBinding() {
 
 	//-- Read Texture
 	this->texture = new Texture(this->routes->texture);
+	if (this->routes->isNormalMapped)
+		this->normalTexture = new Texture(this->routes->normalTexture);
 
 	//-- Enable Backface Culling and Z Buffer
 	glEnable(GL_DEPTH_TEST);
@@ -441,7 +454,7 @@ void Model::roundIt(){
 	centro.y = (this->maxVec.y + this->minVec.y) / 2.0f;
 	centro.z = (this->maxVec.z + this->minVec.z) / 2.0f;
 
-	for (int i = 0; i < (int)this->glVBO.size(); i+=9){
+	for (int i = 0; i < (int)this->glVBO.size(); i+=12){
 		this->glVBO[i] = (this->glVBO[i] - centro.x) / maxi;
 		this->glVBO[i+1] = (this->glVBO[i+1] - centro.y) / maxi;
 		this->glVBO[i+2] = (this->glVBO[i+2] - centro.z) / maxi;

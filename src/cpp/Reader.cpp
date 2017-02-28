@@ -4,7 +4,7 @@
 void Reader::processNode(aiNode * node, const aiScene * scene){
 	for (GLuint i = 0; i < node->mNumMeshes; i++){
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		cout << mesh->mNumVertices << endl;
+		cout << "#Vertices :: " << mesh->mNumVertices << endl;
 		for (GLuint j = 0; j < mesh->mNumVertices; j++) {
 			if (j == 0) {
 				minVec.x = maxVec.x = mesh->mVertices[j].x;
@@ -21,17 +21,29 @@ void Reader::processNode(aiNode * node, const aiScene * scene){
 				maxVec.y = mesh->mVertices[j].y > maxVec.y ? mesh->mVertices[j].y : maxVec.y;
 				maxVec.z = mesh->mVertices[j].z > maxVec.z ? mesh->mVertices[j].z : maxVec.z;
 			}
+			//-- Vertices
 			this->glVBO.push_back(mesh->mVertices[j].x);
 			this->glVBO.push_back(mesh->mVertices[j].y);
 			this->glVBO.push_back(mesh->mVertices[j].z);
+
+			//-- Normals
 			this->glVBO.push_back(mesh->mNormals[j].x);
 			this->glVBO.push_back(mesh->mNormals[j].y);
 			this->glVBO.push_back(mesh->mNormals[j].z);
-			if (mesh->mTextureCoords[0]) {
+
+			//-- Texture Coords
+			if (mesh->HasTextureCoords(0)) {
 				this->glVBO.push_back(mesh->mTextureCoords[0][j].x);
 				this->glVBO.push_back(mesh->mTextureCoords[0][j].y);
 				if (mesh->mTextureCoords[0][j].z) this->glVBO.push_back(mesh->mTextureCoords[0][j].z);
 				else this->glVBO.push_back(0.0f);
+			}
+
+			//-- Tangents (Bi-Tangents will be calculated in the vertex shader)
+			if (mesh->HasTangentsAndBitangents()) {
+				this->glVBO.push_back(mesh->mTangents[j].x);
+				this->glVBO.push_back(mesh->mTangents[j].y);
+				this->glVBO.push_back(mesh->mTangents[j].z);
 			}
 		}
 		for (GLuint j = 0; j < mesh->mNumFaces; j++){
@@ -97,17 +109,29 @@ void Reader::processMesh(aiMesh * mesh){
 			this->maxVec.y = mesh->mVertices[i].y > this->maxVec.y ? mesh->mVertices[i].y : this->maxVec.y;
 			this->maxVec.z = mesh->mVertices[i].z > this->maxVec.z ? mesh->mVertices[i].z : this->maxVec.z;
 		}
+		//-- Vertices
 		this->glVBO.push_back(mesh->mVertices[i].x);
 		this->glVBO.push_back(mesh->mVertices[i].y);
 		this->glVBO.push_back(mesh->mVertices[i].z);
+
+		//-- Normals
 		this->glVBO.push_back(mesh->mNormals[i].x);
 		this->glVBO.push_back(mesh->mNormals[i].y);
 		this->glVBO.push_back(mesh->mNormals[i].z);
-		if (mesh->mTextureCoords[0]) {
+
+		//-- Texture Coords
+		if (mesh->HasTextureCoords(0)){
 			this->glVBO.push_back(mesh->mTextureCoords[0][i].x);
 			this->glVBO.push_back(mesh->mTextureCoords[0][i].y);
 			if (mesh->mTextureCoords[0][i].z) this->glVBO.push_back(mesh->mTextureCoords[0][i].z);
 			else this->glVBO.push_back(0.0f);
+		}
+
+		//-- Tangents (Bi-Tangents will be calculated in the vertex shader)
+		if (mesh->HasTangentsAndBitangents()) {
+			this->glVBO.push_back(mesh->mTangents[i].x);
+			this->glVBO.push_back(mesh->mTangents[i].y);
+			this->glVBO.push_back(mesh->mTangents[i].z);
 		}
 	}
 	for (GLuint i = 0; i < mesh->mNumFaces; i++) {
@@ -163,7 +187,11 @@ void Reader::readNodes(const aiScene * scene){
 Reader::Reader(Routes* routes) :Model(routes) {
 	Assimp::Importer importer;
 	cout << routes->model << endl;
-	const aiScene *scene = importer.ReadFile(routes->model.c_str(), aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_Triangulate);
+	const aiScene *scene = importer.ReadFile(routes->model.c_str(), 
+		aiProcess_FlipUVs | 
+		aiProcess_GenSmoothNormals | 
+		aiProcess_Triangulate | 
+		aiProcess_CalcTangentSpace);
 
 	if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;

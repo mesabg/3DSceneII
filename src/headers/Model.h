@@ -54,6 +54,7 @@ protected:
 	Transformation* transformation;
 	BoundingBox* boundingBox;
 	Texture* texture;
+	Texture* normalTexture;
 	SkyBox* skyboxReference;
 
 	//-- Shader Active

@@ -200,8 +200,32 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	));
 	modelsMaterialProperties[8] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
+	modelsRoutes[9] = (new Routes(
+		/*OBJ File*/	"../models/barrel/barrel.obj",
+		/*Textures*/	vector<string>{ 
+							"../models/barrel/barrel.png" ,
+							"../models/barrel/barrelNormal.png"
+						}
+	));
+	modelsTransform[9] = (new Transformation(
+		/*Scale*/			3.2f,
+		/*Position*/		glm::vec3(-1.4f, 10.4f, 8.0f),
+		/*Angle*/			0.0f,
+		/*Rot Direction*/	glm::vec3(0.0f, 1.0f, 0.0f)
+	));
+	modelsLight[9] = (new Light(
+		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
+		vec3(0.0f, 0.0f, 0.0f),
+		vec3(0.757f, 0.604f, 0.42f),
+		vec3(0.8f, 0.8f, 0.8f)
+	));
+	modelsMaterialProperties[9] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
+
+	
+
+
 	//-- Reflection Mapping Vector
-	vector<bool> reflectionVectorMapModels = {false, false, false, false, false, false, false, false, true};
+	vector<bool> reflectionVectorMapModels = {false, false, false, false, false, false, false, false, true, false};
 
 	//-- Init Model Collection
 	this->modelCollection = new ModelCollection(modelsRoutes, modelsTransform, modelsLight, modelsMaterialProperties);
@@ -323,7 +347,8 @@ void Stage::backRender(Camera* cam, Projection* proj){
 		"Blinn-Phong",
 		"Blinn-Phong",
 		"Blinn-Phong",
-		"Blinn-Phong" });
+		"Blinn-Phong",
+		"Blinn-Phong",});
 	this->lightCollection->render(
 		proj,
 		cam,
@@ -358,7 +383,8 @@ void Stage::frontRender(){
 		"Blinn-Phong-With-Reflections",
 		"Blinn-Phong-With-Shadow",
 		"Blinn-Phong-With-Shadow",
-		"Blinn-Phong-With-Reflections" });
+		"Blinn-Phong-With-Reflections",
+		"Blinn-Phong-With-NormalMapping", });
 	this->lightCollection->render(
 		this->projection,
 		this->camera,
@@ -379,6 +405,7 @@ void Stage::initGLSLPrograms(){
 		new map<string, string>({ { "name", "Blinn-Phong" },{ "vertex", "../src/shaders/BlinnPhong.vert" }, { "fragment", "../src/shaders/BlinnPhong.frag" } }),
 		new map<string, string>({ { "name", "Blinn-Phong-With-Shadow" },{ "vertex", "../src/shaders/BlinnPhongShadow.vert" },{ "fragment", "../src/shaders/BlinnPhongShadow.frag" } }),
 		new map<string, string>({ { "name", "Blinn-Phong-With-Reflections" },{ "vertex", "../src/shaders/BlinnPhongReflections.vert" },{ "fragment", "../src/shaders/BlinnPhongReflections.frag" } }),
+		new map<string, string>({ { "name", "Blinn-Phong-With-NormalMapping" },{ "vertex", "../src/shaders/BlinnPhongNormalMapping.vert" },{ "fragment", "../src/shaders/BlinnPhongNormalMapping.frag" } }),
 		new map<string, string>({ { "name", "Depth" },{ "vertex", "../src/shaders/Depth.vert" },{ "fragment", "../src/shaders/Depth.frag" } })
 	});
 
@@ -392,6 +419,7 @@ void Stage::initGLSLPrograms(){
 			new CGLSLProgram()
 		);
 
+
 		this->illuminationPrograms->at( (*programRoute)->at("name") )->loadShader(
 			(*programRoute)->at("vertex"),
 			CGLSLProgram::VERTEX
@@ -403,6 +431,7 @@ void Stage::initGLSLPrograms(){
 		);
 
 		this->illuminationPrograms->at((*programRoute)->at("name"))->create_link();
+
 	}
 }
 

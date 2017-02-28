@@ -4,6 +4,7 @@
 in layout(location=0) vec3 i_position;
 in layout(location=1) vec2 i_texture;
 in layout(location=2) vec3 i_normal;
+in layout(location=3) vec3 i_tangent;
 
 out vec3 o_normal;
 out vec3 o_toLight;
