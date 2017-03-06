@@ -97,7 +97,7 @@ float directionalShadowCalculation(in sampler2D shadow_map, in vec4 shadow_coord
 	float shadow = 1.0;
 	for (int i=0;i<4;i++)
         if ( texture( shadow_map, shadow_coords.xy + poissonDisk[i]/700.0 ).z  <  shadow_coords.z-bias )
-            shadow-=0.15;
+            shadow-=0.24;
     return shadow;
 }
 
@@ -147,10 +147,10 @@ vec3 BlinnPhongPoint(in vec3 N, in vec3 L, in vec3 V, in Light light, in Attenua
     float point_light = 1.0 / (attenuation.constant + attenuation.linear*light.dist + attenuation.quadratic*light.dist*light.dist);
     float shadow = directionalShadowCalculation(u_shadow_map, o_shadow_coord);
     color += ambientLighting(light, material);
-    color += shadow * point_light * diffuseLighting(N, L, light, material);
-    color += shadow * point_light * specularLightingBlinn(N, L, V, light, material);
+    color += point_light * diffuseLighting(N, L, light, material);
+    color += point_light * specularLightingBlinn(N, L, V, light, material);
 
-    return color;
+    return shadow * color;
 }
 
 vec3 BlinnPhongSpot(in vec3 N, in vec3 L, in vec3 V, in Light light, in Attenuation attenuation, in Material material, in int type){
@@ -165,13 +165,14 @@ vec3 BlinnPhongSpot(in vec3 N, in vec3 L, in vec3 V, in Light light, in Attenuat
     if (theta > attenuation.inner_cosine){
         float spot_effect = pow(theta, attenuation.exponent);
         float spot_light = spot_effect / (attenuation.constant + attenuation.linear*light.dist + attenuation.quadratic*light.dist*light.dist);
-        float shadow = directionalShadowCalculation(u_shadow_map, o_shadow_coord);
+        //float shadow = directionalShadowCalculation(u_shadow_map, o_shadow_coord);
         color += ambientLighting(light, material);
-        color += shadow * spot_light * diffuseLighting(N, L, light, material);
-        color += shadow * spot_light * specularLightingBlinn(N, L, V, light, material);
+        color += spot_light * diffuseLighting(N, L, light, material);
+        color += spot_light * specularLightingBlinn(N, L, V, light, material);
     }
+    float shadow = directionalShadowCalculation(u_shadow_map, o_shadow_coord);
 
-    return color;
+    return shadow * color;
 }
 
 vec4 calculateBlinnPhong(in vec3 N, in vec3 L, in vec3 V, in Light light, in Attenuation attenuation, in Material material, in int index) {
