@@ -50,8 +50,8 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	modelsMaterialProperties[0] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
 	modelsRoutes[1] = (new Routes(
-		/*OBJ File*/	"../models/futbol/futbol.obj",
-		/*Texture*/		"../models/futbol/futbol.jpg"
+		/*OBJ File*/	"../models/utah/utah.obj",
+		/*Texture*/		"../models/utah/utah.png"
 	));
 	modelsTransform[1] = (new Transformation(
 		/*Scale*/			3.5f,
@@ -201,15 +201,15 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	modelsMaterialProperties[8] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
 	modelsRoutes[9] = (new Routes(
-		/*OBJ File*/	"../models/barrel/barrel.obj",
+		/*OBJ File*/	"../models/alduin-dragon-obj/alduin-dragon.obj",
 		/*Textures*/	vector<string>{ 
-							"../models/barrel/barrel.png" ,
-							"../models/barrel/barrelNormal.png"
+							"../models/alduin-dragon-obj/alduin.jpg" ,
+							"../models/alduin-dragon-obj/alduin_n.jpg"
 						}
 	));
 	modelsTransform[9] = (new Transformation(
-		/*Scale*/			3.2f,
-		/*Position*/		glm::vec3(-1.4f, 10.4f, 8.0f),
+		/*Scale*/			10.0f,
+		/*Position*/		glm::vec3(9.20f, 10.4f, 8.0f),
 		/*Angle*/			0.0f,
 		/*Rot Direction*/	glm::vec3(0.0f, 1.0f, 0.0f)
 	));
@@ -223,13 +223,34 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 
 	
 
+	modelsRoutes[10] = (new Routes(
+		/*OBJ File*/	"../models/barrel/barrel.obj",
+		/*Textures*/	vector<string>{
+			"../models/barrel/barrel.png",
+			"../models/barrel/barrelNormal.png"
+		}
+	));
+	modelsTransform[10] = (new Transformation(
+		/*Scale*/			3.2f,
+		/*Position*/		glm::vec3(-3.4f, 10.4f, 15.20f),
+		/*Angle*/			0.0f,
+		/*Rot Direction*/	glm::vec3(0.0f, 1.0f, 0.0f)
+	));
+	modelsLight[10] = (new Light(
+		vec3(0.0f, 0.0f, 0.0f), //-- Does not matter
+		vec3(0.0f, 0.0f, 0.0f),
+		vec3(0.757f, 0.604f, 0.42f),
+		vec3(0.8f, 0.8f, 0.8f)
+	));
+	modelsMaterialProperties[10] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
+
 
 	//-- Reflection Mapping Vector
-	vector<bool> reflectionVectorMapModels = {false, false, false, false, false, false, false, false, true, false};
+	//vector<bool> reflectionVectorMapModels = {false, false, false, false, false, false, false, false, true, false};
 
 	//-- Init Model Collection
-	this->modelCollection = new ModelCollection(modelsRoutes, modelsTransform, modelsLight, modelsMaterialProperties);
-	this->modelCollection->setReflectionMap(reflectionVectorMapModels);
+	//this->modelCollection = new ModelCollection(modelsRoutes, modelsTransform, modelsLight, modelsMaterialProperties);
+	//this->modelCollection->setReflectionMap(reflectionVectorMapModels);
 
 	//-- Light Models Loading
 	vector<Routes*> lightsRoutes(amountOfLights, NULL);
@@ -256,18 +277,18 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	lightsMaterialProperties[0] = (new MaterialProperties(0.1f, 100.0f, 0.1f, 0.2f));
 
 	//-- Reflection map to the lights
-	vector<bool> reflectionVectorMapLights = { false, false, false, false, false, false, false, false, true };
+	//vector<bool> reflectionVectorMapLights = { false, false, false, false, false, false, false, false, true };
 
 	//-- Initializing Light Collection
-	this->lightCollection = new ModelCollection(lightsRoutes, lightsTransform, lightsLight, lightsMaterialProperties);
-	this->lightCollection->setReflectionMap(reflectionVectorMapLights);
+	//this->lightCollection = new ModelCollection(lightsRoutes, lightsTransform, lightsLight, lightsMaterialProperties);
+	//this->lightCollection->setReflectionMap(reflectionVectorMapLights);
 
 	//-- Initializing Player
-	this->player = new Player(this->modelCollection->getEntity(0));
-	this->camera = new Camera(this->modelCollection->getEntity(0)->getTransformation());
-	this->mousePicker = new MousePicker(this->camera, this->projection);
+	//this->player = new Player(this->modelCollection->getEntity(0));
+	//this->camera = new Camera(this->modelCollection->getEntity(0)->getTransformation());
+	//this->mousePicker = new MousePicker(this->camera, this->projection);
 
-	this->skyBox = new SkyBox({ 
+	/*this->skyBox = new SkyBox({ 
 		"../sky/down-under/right.tga", 
 		"../sky/down-under/left.tga", 
 		"../sky/down-under/up.tga",
@@ -275,10 +296,10 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 		"../sky/down-under/back.tga",
 		"../sky/down-under/front.tga"}, 
 		this->projection->getProjection(), 
-		this->camera->getView());
+		this->camera->getView());*/
 
-	this->modelCollection->setSkyBox(this->skyBox);
-	this->lightCollection->setSkyBox(this->skyBox);
+	//this->modelCollection->setSkyBox(this->skyBox);
+	//this->lightCollection->setSkyBox(this->skyBox);
 
 	//-- Init Frame Buffer Object
 	this->frameBufferObject = new FrameBuffer();
@@ -323,6 +344,39 @@ Stage::Stage(RenderController* renderController) :RenderColleague(renderControll
 	texture_program.addUniform("texture1");
 
 	texture_program.disable();
+
+
+	//-- Init Render Facade
+	this->renderFacade = new RenderFacade();
+	this->renderFacade->initModelEntities(modelsRoutes, modelsTransform, modelsLight, modelsMaterialProperties);
+	this->renderFacade->initLightEntities(lightsRoutes, lightsTransform, lightsLight, lightsMaterialProperties);
+
+	//-- Initializing Player
+	this->player = new Player(this->renderFacade->getModel(0));
+	this->camera = new Camera(this->renderFacade->getModel(0)->getTransformation());
+	this->mousePicker = new MousePicker(this->camera, this->projection);
+
+	this->skyBox = new SkyBox({
+		"../sky/down-under/right.tga",
+		"../sky/down-under/left.tga",
+		"../sky/down-under/up.tga",
+		"../sky/down-under/down.tga",
+		"../sky/down-under/back.tga",
+		"../sky/down-under/front.tga" },
+		this->projection->getProjection(),
+		this->camera->getView());
+
+	//-- Bindind data to render facade
+	this->renderFacade->bindShaderPrograms(this->illuminationPrograms);
+	this->renderFacade->bindFBO(this->frameBufferObject);
+	this->renderFacade->bindCamera(this->camera);
+	this->renderFacade->bindProjection(this->projection);
+	this->renderFacade->bindLowQualityShader("LowQuality");
+	this->renderFacade->bindDepthShader("Depth");
+	this->renderFacade->getModel(7)->setIsReflected(true);
+	this->renderFacade->getModel(5)->setIsRefracted(true);
+
+	this->Send("showShadowMap", &showShadowMap);
 }
 
 Stage::~Stage() {
@@ -356,6 +410,15 @@ void Stage::backRender(Camera* cam, Projection* proj){
 		this->illuminationPrograms->at("Blinn-Phong"));
 }
 
+void Stage::backCubeDepthMapRender(Camera * cam, Projection * proj){
+	//-- Render the model collection and light collection
+	this->modelCollection->render(
+		proj,
+		cam,
+		this->lightCollection->getLightSet(),
+		this->illuminationPrograms->at("Depth-CubeMap"));
+}
+
 void Stage::frontRender(){
 	//-- Render SkyBox
 	this->skyBox->render();
@@ -369,8 +432,16 @@ void Stage::frontRender(){
 	//-- Calculating Mouse Ray
 	this->mousePicker->calculateRay();
 
+	/*int click;
+	if ((click = this->renderFacade->isClicked(this->mousePicker->getCurrentMouseRay())) != -1) {
+		*(this->selectedModel) = click;
+		cout << click << endl;
+	}*/
+
+	this->renderFacade->render("Illumination");
+
 	//-- Render the model collection and light collection
-	this->modelCollection->render(
+	/*this->modelCollection->render(
 		this->projection,
 		this->camera,
 		this->lightCollection->getLightSet(),
@@ -384,12 +455,12 @@ void Stage::frontRender(){
 		"Blinn-Phong-With-Shadow",
 		"Blinn-Phong-With-Shadow",
 		"Blinn-Phong-With-Reflections",
-		"Blinn-Phong-With-NormalMapping", });
+		"Blinn-Phong-With-NormalMapping", }, this->frameBufferObject->getCubeMapDepthTexture());
 	this->lightCollection->render(
 		this->projection,
 		this->camera,
 		this->lightCollection->getLightSet(),
-		this->illuminationPrograms->at("Blinn-Phong"));
+		this->illuminationPrograms->at("Blinn-Phong"));*/
 }
 
 void Stage::initGLSLPrograms(){
@@ -402,11 +473,14 @@ void Stage::initGLSLPrograms(){
 	//-- Structure to initialize
 	this->illuminationPrograms = new map<string, CGLSLProgram*>();
 	vector< map<string, string>* > *routes = new vector< map<string, string>* >({
-		new map<string, string>({ { "name", "Blinn-Phong" },{ "vertex", "../src/shaders/BlinnPhong.vert" }, { "fragment", "../src/shaders/BlinnPhong.frag" } }),
-		new map<string, string>({ { "name", "Blinn-Phong-With-Shadow" },{ "vertex", "../src/shaders/BlinnPhongShadow.vert" },{ "fragment", "../src/shaders/BlinnPhongShadow.frag" } }),
-		new map<string, string>({ { "name", "Blinn-Phong-With-Reflections" },{ "vertex", "../src/shaders/BlinnPhongReflections.vert" },{ "fragment", "../src/shaders/BlinnPhongReflections.frag" } }),
-		new map<string, string>({ { "name", "Blinn-Phong-With-NormalMapping" },{ "vertex", "../src/shaders/BlinnPhongNormalMapping.vert" },{ "fragment", "../src/shaders/BlinnPhongNormalMapping.frag" } }),
-		new map<string, string>({ { "name", "Depth" },{ "vertex", "../src/shaders/Depth.vert" },{ "fragment", "../src/shaders/Depth.frag" } })
+		new map<string, string>({ { "name", "Blinn-Phong" },{ "vertex", "../src/shaders/BlinnPhong.vert" }, { "geometry", "" }, { "fragment", "../src/shaders/BlinnPhong.frag" } }),
+		new map<string, string>({ { "name", "Blinn-Phong-With-Shadow" },{ "vertex", "../src/shaders/BlinnPhongShadow.vert" },{ "geometry", "" } ,{ "fragment", "../src/shaders/BlinnPhongShadow.frag" } }),
+		new map<string, string>({ { "name", "Blinn-Phong-With-Reflections" },{ "vertex", "../src/shaders/BlinnPhongReflections.vert" },{ "geometry", "" } ,{ "fragment", "../src/shaders/BlinnPhongReflections.frag" } }),
+		new map<string, string>({ { "name", "Blinn-Phong-With-NormalMapping" },{ "vertex", "../src/shaders/BlinnPhongNormalMapping.vert" },{ "geometry", "" } ,{ "fragment", "../src/shaders/BlinnPhongNormalMapping.frag" } }),
+		new map<string, string>({ { "name", "Depth" },{ "vertex", "../src/shaders/Depth.vert" },{ "geometry", "" }, { "fragment", "../src/shaders/Depth.frag" } }),
+		new map<string, string>({ { "name", "Depth-CubeMap" },{ "vertex", "../src/shaders/DepthCubeMap.vert" },{ "geometry", "../src/shaders/DepthCubeMap.geom" },{ "fragment", "../src/shaders/DepthCubeMap.frag" } }),
+		new map<string, string>({ { "name", "Illumination" },{ "vertex", "../src/shaders/illumination.vert" },{ "geometry", "" },{ "fragment", "../src/shaders/illumination.frag" } }),
+		new map<string, string>({ { "name", "LowQuality" },{ "vertex", "../src/shaders/lowQuality.vert" },{ "geometry", "" },{ "fragment", "../src/shaders/lowQuality.frag" } })
 	});
 
 	//-- Initialize Shader Programs
@@ -425,13 +499,20 @@ void Stage::initGLSLPrograms(){
 			CGLSLProgram::VERTEX
 		);
 
+		//-- Loading Geometry shader if its possible
+		if ((*programRoute)->at("geometry") != "") {
+			this->illuminationPrograms->at((*programRoute)->at("name"))->loadShader(
+				(*programRoute)->at("geometry"),
+				CGLSLProgram::GEOMETRY
+			);
+		}
+
 		this->illuminationPrograms->at((*programRoute)->at("name"))->loadShader(
 			(*programRoute)->at("fragment"),
 			CGLSLProgram::FRAGMENT
 		);
 
 		this->illuminationPrograms->at((*programRoute)->at("name"))->create_link();
-
 	}
 }
 
@@ -451,14 +532,16 @@ Projection * Stage::getProjection() {
 }
 
 Model * Stage::getSelectedModel(){
-	return this->modelCollection->getEntity(unsigned int(*(this->selectedModel)));
+	return this->renderFacade->getModel(unsigned int(*(this->selectedModel)));
+	//return this->modelCollection->getEntity(unsigned int(*(this->selectedModel)));
 }
 
 Model * Stage::getSelectedLight(){
 	//-- Cambiar por un arreglo de luces a futuro 03/02/17
 	//-- Hoy es el futuro, pero aun no se ha cambiado ni se va a cambiar 16/02/17
 	//-- Hoy es mucho después del futuro inclusive, y no tengo la esperanza de cambiarlo siquiera 24/02/2017
-	return this->lightCollection->getEntity(0);
+	//return this->lightCollection->getEntity(0);
+	return this->renderFacade->getLightModel(0);
 }
 
 float * Stage::getSelectedModelIndex(){
@@ -471,8 +554,9 @@ float * Stage::getSelectedLightIndex(){
 
 void Stage::Notify(string message, void* data) {
 	if (message == "init VBOs") {
-		this->modelCollection->initVBOs();
-		this->lightCollection->initVBOs();
+		//this->modelCollection->initVBOs();
+		//this->lightCollection->initVBOs();
+		this->renderFacade->initVBOs();
 	}
 	else if (message == "width/height") {
 		this->width = ((float*)data)[0];
@@ -513,6 +597,9 @@ void Stage::Notify(string message, void* data) {
 		//this->camera->calculatePitch(((int*)data)[0], ((int*)data)[1], ((int*)data)[2], ((int*)data)[3]);
 		//this->camera->calculateAngleAroundPlayer(((int*)data)[0], ((int*)data)[1], ((int*)data)[2], ((int*)data)[3]);
 	}
+
+	if (message == "updateSetShadowMap")
+		this->showShadowMap = *((bool*)data);
 	/*
 	if (message == "Animate") {
 		this->entities[4]->getAnimation()->setOnRet();
@@ -522,24 +609,42 @@ void Stage::Notify(string message, void* data) {
 }
 
 void Stage::buildDynamicCubeMap(const int entityID) {
-	this->modelCollection->getEntity(entityID)->isReflect(false);
-	Camera* aux_camera = new Camera(*(this->modelCollection->getEntity(entityID)->getTransformation()->getPosition()), 0.0f, 0.0f, vec3(0.0f, 1.0f, 0.0f));
+	this->renderFacade->getModel(entityID)->isReflect(false);
+	Camera* aux_camera = new Camera(*(this->renderFacade->getModel(entityID)->getTransformation()->getPosition()), 0.0f, 0.0f, vec3(0.0f, 1.0f, 0.0f));
 	Projection* aux_projection = new Projection(90.0f, 1.0f, 1.0f, 1000.0f);
 
-	this->modelCollection->getEntity(entityID)->getTexture()->setCubeMapTexture(this->frameBufferObject->getCubeMapColorTexture());
+	this->renderFacade->getModel(entityID)->getTexture()->setCubeMapTexture(this->frameBufferObject->getCubeMapColorTexture());
 	this->frameBufferObject->bindCubeMapFrameBuffer();
 	for (int i = 0; i < 6; i++){
 		this->frameBufferObject->activeCubeMapColorTexture(i);
 		this->switchFace(aux_camera, i);
-		this->backRender(aux_camera, aux_projection);
-	
+		this->renderFacade->low_quality_render(aux_projection, aux_camera, entityID);
 	}
 	this->frameBufferObject->unbindCurrentFrameBuffer();
-	this->modelCollection->getEntity(entityID)->isReflect(true);
+	this->renderFacade->getModel(entityID)->isReflect(true);
+}
+
+void Stage::buildDynamicCubeDepthMap(int lightID){
+	Camera* aux_camera = new Camera(*(this->lightCollection->getEntity(lightID)->getTransformation()->getPosition()), 0.0f, 0.0f, vec3(0.0f, 1.0f, 0.0f));
+	Projection* aux_projection = new Projection(90.0f, 1.0f, 1.0f, 1000.0f);
+
+	this->frameBufferObject->bindCubeMapFrameBuffer();
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	for (int i = 0; i < 6; i++){
+		this->frameBufferObject->activeCubeMapDepthTexture(i);
+		this->switchFace(aux_camera, i);
+		this->backRender(aux_camera, aux_projection);
+	}
+	this->frameBufferObject->unbindCurrentFrameBuffer();
 }
 
 void Stage::buildShadowMap(){
-	glm::vec3 lightInvDir = (*(this->lightCollection->getEntity(0)->getMaterialLight()->getPosition()));
+	glm::vec3 lightInvDir = (*(this->lightCollection->getEntity(0)->getLight()->getPosition()));
 	// Compute the MVP matrix from the light's point of view
 	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-25, 25, -25, 25, -20, 60);
 	glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 10), glm::vec3(0, 1, 0));
@@ -587,10 +692,7 @@ void Stage::drawShadowMap(){
 }
 
 void Stage::render() {
-	//-- Build Necesary CubeMaps
-	this->buildDynamicCubeMap(8);
-	this->buildDynamicCubeMap(5);
-	this->buildShadowMap();
 	this->frontRender();
-	this->drawShadowMap();
+	if (this->showShadowMap) 
+		this->renderFacade->render_shadow_map();
 }

@@ -3,6 +3,7 @@
 #define __BOUNDING_BOX_H_
 
 //-- Global Includes
+#include <glew\glew.h>
 #include <vector>
 #include <glm\glm\glm.hpp>
 #include <glm\glm\gtc\matrix_transform.hpp>
@@ -35,6 +36,8 @@ public:
 	/*Some Functions*/
 	void move(mat4 transformation);
 	bool checkIntersection(vec3 parametric);
+	void recalculate();
+	void draw();
 };
 
 #endif

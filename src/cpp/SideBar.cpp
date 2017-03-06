@@ -19,6 +19,9 @@ SideBar::SideBar(RenderController* renderController, const int width, const int 
 	TwDefine("Principal visible = true");
 	TwDefine("Principal position = '20 20'");
 	TwDefine("Principal size = '280 160'");
+
+	this->showShadowMap = new bool;
+	*(this->showShadowMap) = true;
 }
 
 SideBar::SideBar(RenderController* renderController):RenderColleague(renderController) {
@@ -43,7 +46,8 @@ SideBar::SideBar(RenderController* renderController):RenderColleague(renderContr
 	TwDefine("Principal visible = true");
 	TwDefine("Principal position = '20 20'");
 	TwDefine("Principal size = '280 190'");
-
+	this->showShadowMap = new bool;
+	*(this->showShadowMap) = true;
 
 }
 
@@ -86,7 +90,8 @@ void SideBar::Destroy(){
 }
 
 void SideBar::Notify(string message, void* data) {
-
+	if (message == "showShadowMap")
+		this->showShadowMap = (bool*)data;
 }
 
 void SideBar::setModel(Model * model){
@@ -130,7 +135,8 @@ void SideBar::bindPrincipal(){
 	TwAddVarRW(this->principalPropertiesBar, "LightSelect", TW_TYPE_FLOAT, this->selectedLight, (" min=-1 max=" + std::to_string(amountOfLights-1) + " step=1 group='Select a light' label='Light index' ").c_str());
 	TwAddButton(this->principalPropertiesBar, "SelectLightButton", selectLightCallback, (void*)this, " label='Select light' group='Select a light' help='Select a light by index'");
 
-	TwAddButton(this->principalPropertiesBar, "Animate", animateCallback, (void*)this, " label='Turn On/Off' group='Animation' help='Turn On/Off animation'");
+	//TwAddButton(this->principalPropertiesBar, "Animate", animateCallback, (void*)this, " label='Turn On/Off' group='Animation' help='Turn On/Off animation'");
+	TwAddVarRW(this->principalPropertiesBar, "Show Shadow Map", TW_TYPE_BOOLCPP, this->showShadowMap, "group='Shadows' label='Show Shadow Map' opened=true help='Turn On/Off Shadow Map.' ");
 }
 
 void SideBar::bindModel() {
@@ -147,14 +153,14 @@ void SideBar::bindModel() {
 	TwDefine("Model size = '280 850'");
 
 	//-- Lightning Type
-	TwAddVarRW(this->modelPropertiesBar, "SelectPerFragmentLightning", TW_TYPE_BOOLCPP, this->model->getLightningTypeX_frag(), "group='Lightning' label='Per Fragment Lightning' help='Select per fragment lightning shader.'");
-	TwAddVarRW(this->modelPropertiesBar, "SelectPerVertexLightning", TW_TYPE_BOOLCPP, this->model->getLightningTypeY_vert(), "group='Lightning' label='Per Vertex Lightning' help='Select per vertex lightning shader.'");
+	//TwAddVarRW(this->modelPropertiesBar, "SelectPerFragmentLightning", TW_TYPE_BOOLCPP, this->model->getLightningTypeX_frag(), "group='Lightning' label='Per Fragment Lightning' help='Select per fragment lightning shader.'");
+	//TwAddVarRW(this->modelPropertiesBar, "SelectPerVertexLightning", TW_TYPE_BOOLCPP, this->model->getLightningTypeY_vert(), "group='Lightning' label='Per Vertex Lightning' help='Select per vertex lightning shader.'");
 
 	//-- Select shading technic to use
-	TwAddVarRW(this->modelPropertiesBar, "SelectPhong", TW_TYPE_BOOLCPP, this->model->getShadingVectorBitMapXCoord_phong(), "group='Shading' label='Phong' help='Use Phong shading technic.'");
-	TwAddVarRW(this->modelPropertiesBar, "SelectBlinnPhong", TW_TYPE_BOOLCPP, this->model->getShadingVectorBitMapYCoord_blinn(), "group='Shading' label='Blinn-Phong' help='Use Blinn-Phong shading technic.'");
-	TwAddVarRW(this->modelPropertiesBar, "SelectOrenNayar", TW_TYPE_BOOLCPP, this->model->getShadingVectorBitMapZCoord_oren(), "group='Shading' label='Oren Nayar' help='Use Oren Nayar shading technic.'");
-	TwAddVarRW(this->modelPropertiesBar, "SelectCookTorrance", TW_TYPE_BOOLCPP, this->model->getShadingVectorBitMapWCoord_cook(), "group='Shading' label='Cook Torrance' help='Use Cook Torrance shading technic.'");
+	//TwAddVarRW(this->modelPropertiesBar, "SelectPhong", TW_TYPE_BOOLCPP, this->model->getShadingVectorBitMapXCoord_phong(), "group='Shading' label='Phong' help='Use Phong shading technic.'");
+	//TwAddVarRW(this->modelPropertiesBar, "SelectBlinnPhong", TW_TYPE_BOOLCPP, this->model->getShadingVectorBitMapYCoord_blinn(), "group='Shading' label='Blinn-Phong' help='Use Blinn-Phong shading technic.'");
+	//TwAddVarRW(this->modelPropertiesBar, "SelectOrenNayar", TW_TYPE_BOOLCPP, this->model->getShadingVectorBitMapZCoord_oren(), "group='Shading' label='Oren Nayar' help='Use Oren Nayar shading technic.'");
+	//TwAddVarRW(this->modelPropertiesBar, "SelectCookTorrance", TW_TYPE_BOOLCPP, this->model->getShadingVectorBitMapWCoord_cook(), "group='Shading' label='Cook Torrance' help='Use Cook Torrance shading technic.'");
 
 
 	//-- Transformations
@@ -169,15 +175,33 @@ void SideBar::bindModel() {
 	TwDefine(" Model/Scale group=Transforms help='Change the model scale.' ");
 
 	//-- Material Colors
-	TwAddVarRW(this->modelPropertiesBar, "MatAmbientReflectances", TW_TYPE_COLOR3F, this->model->getMaterialLight()->getAmbient(), "group='Material Colors' label='Ambient Reflectances' opened=true help='Change the material ambient reflectances.' ");
-	TwAddVarRW(this->modelPropertiesBar, "MatDiffuseReflectances", TW_TYPE_COLOR3F, this->model->getMaterialLight()->getDiffuse(), "group='Material Colors' label='Diffuse Reflectances' opened=true help='Change the material diffuse reflectances.' ");
-	TwAddVarRW(this->modelPropertiesBar, "MatSpecularReflectances", TW_TYPE_COLOR3F, this->model->getMaterialLight()->getSpecular(), "group='Material Colors' label='Specular Reflactances' opened=true help='Change the material specular reflectances.' ");
+	TwAddVarRW(this->modelPropertiesBar, "MatAmbientReflectances", TW_TYPE_COLOR3F, this->model->getLight()->getAmbient(), "group='Material Colors' label='Ambient Reflectances' opened=true help='Change the material ambient reflectances.' ");
+	TwAddVarRW(this->modelPropertiesBar, "MatDiffuseReflectances", TW_TYPE_COLOR3F, this->model->getLight()->getDiffuse(), "group='Material Colors' label='Diffuse Reflectances' opened=true help='Change the material diffuse reflectances.' ");
+	TwAddVarRW(this->modelPropertiesBar, "MatSpecularReflectances", TW_TYPE_COLOR3F, this->model->getLight()->getSpecular(), "group='Material Colors' label='Specular Reflactances' opened=true help='Change the material specular reflectances.' ");
 
 	//-- Light Properties
-	TwAddVarRW(this->modelPropertiesBar, "MatShininess", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getShininess(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Shininess factor' help='Change the shininess factor.'");
-	TwAddVarRW(this->modelPropertiesBar, "MatRoughness", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getRoughness(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Roughness factor' help='Change the roughness factor.'");
-	TwAddVarRW(this->modelPropertiesBar, "MatFresnel", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getFresnel(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Fresnel factor' help='Change the fresnel factor.'");
-	TwAddVarRW(this->modelPropertiesBar, "MatAlbedo", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getAlbedo(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Albedo factor' help='Change the albedo factor.'");
+	TwAddVarRW(this->modelPropertiesBar, "MatShininess", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getShininess(), " min=0.01 max=0.99 step=0.01 group='Light Properties' label='Shininess factor' help='Change the shininess factor.'");
+	//TwAddVarRW(this->modelPropertiesBar, "MatRoughness", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getRoughness(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Roughness factor' help='Change the roughness factor.'");
+	//TwAddVarRW(this->modelPropertiesBar, "MatFresnel", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getFresnel(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Fresnel factor' help='Change the fresnel factor.'");
+	//TwAddVarRW(this->modelPropertiesBar, "MatAlbedo", TW_TYPE_FLOAT, this->model->getMaterialProperties()->getAlbedo(), " min=0.1 max=100.0 step=0.01 group='Light Properties' label='Albedo factor' help='Change the albedo factor.'");
+
+	//-- Separator
+	TwAddSeparator(this->modelPropertiesBar, "OptionsSeparator[7]", "");
+
+	TwAddVarRW(this->modelPropertiesBar, "Reflected", TW_TYPE_BOOLCPP, this->model->getIsReflected(), "group='Reflections/Refractions' label='Reflection' opened=true help='Turn On/Off the reflection.' ");
+	TwAddVarRW(this->modelPropertiesBar, "Refracted", TW_TYPE_BOOLCPP, this->model->getIsRefracted(), "group='Reflections/Refractions' label='Refraction' opened=true help='Turn On/Off the refraction.' ");
+	TwAddVarRW(this->modelPropertiesBar, "RefractionFactor", TW_TYPE_FLOAT, this->model->getRefractedIndex(), " min=0.01 max=0.99 step=0.01 group='Reflections/Refractions' label='Refraction Factor' help='Change the refraction factor.'");
+
+	//-- Separator
+	TwAddSeparator(this->modelPropertiesBar, "OptionsSeparator[7]", "");
+	
+	//-- Normal and parallax mapping
+	if (this->model->getRoutes()->isNormalMapped) {
+		//TwAddVarRW(this->modelPropertiesBar, "None", TW_TYPE_BOOLCPP, this->model->getIsRefracted(), "group='Reflections/Refractions' label='Refraction' opened=true help='Turn On/Off the refraction.' ");
+		TwAddVarRW(this->modelPropertiesBar, "Normal", TW_TYPE_BOOLCPP, this->model->getIsNormalMapped(), "group='Texture Mapping' label='Normal Mapping' opened=true help='Turn On/Off the normal mapped.' ");
+		TwAddVarRW(this->modelPropertiesBar, "Parallax", TW_TYPE_BOOLCPP, this->model->getIsParallaxMapped(), "group='Texture Mapping' label='Parallax Mapping' opened=true help='Turn On/Off the parallax mapped.' ");
+		TwAddVarRW(this->modelPropertiesBar, "ParallaxHeight", TW_TYPE_FLOAT, this->model->getParallaxMapHeight(), " min=0.01 max=400.0 step=0.01 group='Texture Mapping' label='Parallax Height' help='Change the height parallax factor.'");
+	}
 
 	//-- Activate textures
 	TwAddVarRW(this->modelPropertiesBar, "TextureSwitch", TW_TYPE_BOOLCPP, this->model->getTexture()->isActive(), "group='Texture Switch' label='Turn On/Off' opened=true help='Turn On/Off the texture.' ");
@@ -204,19 +228,19 @@ void SideBar::bindLight() {
 	TwDefine("Light size = '280 850'");
 
 	//-- Transformations
-	TwAddVarRW(this->lightPropertiesBar, "TranslationSpeedXLight", TW_TYPE_FLOAT, this->model->getMaterialLight()->getPositionX(), " min=-10000 max=10000 step=0.01 group='Translation' label='Translation factor X' ");
-	TwAddVarRW(this->lightPropertiesBar, "TranslationSpeedYLight", TW_TYPE_FLOAT, this->model->getMaterialLight()->getPositionY(), " min=-10000 max=10000 step=0.01 group='Translation' label='Translation factor Y' ");
-	TwAddVarRW(this->lightPropertiesBar, "TranslationSpeedZLight", TW_TYPE_FLOAT, this->model->getMaterialLight()->getPositionZ(), " min=-10000 max=10000 step=0.01 group='Translation' label='Translation factor Z' ");
+	TwAddVarRW(this->lightPropertiesBar, "TranslationSpeedXLight", TW_TYPE_FLOAT, this->model->getLight()->getPositionX(), " min=-10000 max=10000 step=0.01 group='Translation' label='Translation factor X' ");
+	TwAddVarRW(this->lightPropertiesBar, "TranslationSpeedYLight", TW_TYPE_FLOAT, this->model->getLight()->getPositionY(), " min=-10000 max=10000 step=0.01 group='Translation' label='Translation factor Y' ");
+	TwAddVarRW(this->lightPropertiesBar, "TranslationSpeedZLight", TW_TYPE_FLOAT, this->model->getLight()->getPositionZ(), " min=-10000 max=10000 step=0.01 group='Translation' label='Translation factor Z' ");
 
 	//-- Colors
-	TwAddVarRW(this->lightPropertiesBar, "LightAmbientReflectances", TW_TYPE_COLOR3F, this->model->getMaterialLight()->getAmbient(), "group='Light Colors' label='Ambient Reflectances' opened=true help='Change the light ambient reflectances.' ");
-	TwAddVarRW(this->lightPropertiesBar, "LightDiffuseReflectances", TW_TYPE_COLOR3F, this->model->getMaterialLight()->getDiffuse(), "group='Light Colors' label='Diffuse Reflectances' opened=true help='Change the light diffuse reflectances.' ");
-	TwAddVarRW(this->lightPropertiesBar, "LightSpecularReflectances", TW_TYPE_COLOR3F, this->model->getMaterialLight()->getSpecular(), "group='Light Colors' label='Specular Reflactances' opened=true help='Change the light specular reflectances.' ");
+	TwAddVarRW(this->lightPropertiesBar, "LightAmbientReflectances", TW_TYPE_COLOR3F, this->model->getLight()->getAmbient(), "group='Light Colors' label='Ambient Reflectances' opened=true help='Change the light ambient reflectances.' ");
+	TwAddVarRW(this->lightPropertiesBar, "LightDiffuseReflectances", TW_TYPE_COLOR3F, this->model->getLight()->getDiffuse(), "group='Light Colors' label='Diffuse Reflectances' opened=true help='Change the light diffuse reflectances.' ");
+	TwAddVarRW(this->lightPropertiesBar, "LightSpecularReflectances", TW_TYPE_COLOR3F, this->model->getLight()->getSpecular(), "group='Light Colors' label='Specular Reflactances' opened=true help='Change the light specular reflectances.' ");
 
 	//-- Light Attenuation
-	TwAddVarRW(this->lightPropertiesBar, "AttenuationSpeedXLight", TW_TYPE_FLOAT, this->model->getMaterialLight()->getAttenuationX(), " min=0.00001 max=20.0 step=0.00001 group='Attenuation' label='Constant' ");
-	TwAddVarRW(this->lightPropertiesBar, "AttenuationSpeedYLight", TW_TYPE_FLOAT, this->model->getMaterialLight()->getAttenuationY(), " min=0.00001 max=20.0 step=0.00001 group='Attenuation' label='Linear' ");
-	TwAddVarRW(this->lightPropertiesBar, "AttenuationSpeedZLight", TW_TYPE_FLOAT, this->model->getMaterialLight()->getAttenuationZ(), " min=0.00001 max=20.0 step=0.00001 group='Attenuation' label='Cuadratic' ");
+	TwAddVarRW(this->lightPropertiesBar, "AttenuationSpeedXLight", TW_TYPE_FLOAT, this->model->getLight()->getAttenuationX(), " min=0.01 max=0.99 step=0.01 group='Attenuation' label='Constant' ");
+	TwAddVarRW(this->lightPropertiesBar, "AttenuationSpeedYLight", TW_TYPE_FLOAT, this->model->getLight()->getAttenuationY(), " min=0.01 max=0.99 step=0.01 group='Attenuation' label='Linear' ");
+	TwAddVarRW(this->lightPropertiesBar, "AttenuationSpeedZLight", TW_TYPE_FLOAT, this->model->getLight()->getAttenuationZ(), " min=0.01 max=0.99 step=0.01 group='Attenuation' label='Cuadratic' ");
 
 	
 
@@ -224,18 +248,18 @@ void SideBar::bindLight() {
 	TwAddSeparator(this->lightPropertiesBar, "OptionsSeparator[3]", "");
 
 	//-- Activate textures
-	TwAddVarRW(this->lightPropertiesBar, "LightSwitch", TW_TYPE_BOOLCPP, this->model->getMaterialLight()->active(), "group='Light Switch' label='Turn On/Off' opened=true help='Turn On/Off the light.' ");
+	TwAddVarRW(this->lightPropertiesBar, "LightSwitch", TW_TYPE_BOOLCPP, this->model->getLight()->active(), "group='Light Switch' label='Turn On/Off' opened=true help='Turn On/Off the light.' ");
 
 	//-- Light Type
-	TwAddVarRW(this->lightPropertiesBar, "LightTypeDirectional", TW_TYPE_BOOLCPP, this->model->getMaterialLight()->getTypeXDirectional(), "group='Light Type' label='Directional' opened=true help='Turn On/Off the directional light.' ");
-	TwAddVarRW(this->lightPropertiesBar, "LightTypePoint", TW_TYPE_BOOLCPP, this->model->getMaterialLight()->getTypeYPoint(), "group='Light Type' label='Point' opened=true help='Turn On/Off the point light.' ");
-	TwAddVarRW(this->lightPropertiesBar, "LightTypeSpot", TW_TYPE_BOOLCPP, this->model->getMaterialLight()->getTypeZSpot(), "group='Light Type' label='Spot' opened=true help='Turn On/Off the spot light.' ");
+	TwAddVarRW(this->lightPropertiesBar, "LightTypeDirectional", TW_TYPE_BOOLCPP, this->model->getLight()->getTypeXDirectional(), "group='Light Type' label='Directional' opened=true help='Turn On/Off the directional light.' ");
+	TwAddVarRW(this->lightPropertiesBar, "LightTypePoint", TW_TYPE_BOOLCPP, this->model->getLight()->getTypeYPoint(), "group='Light Type' label='Point' opened=true help='Turn On/Off the point light.' ");
+	TwAddVarRW(this->lightPropertiesBar, "LightTypeSpot", TW_TYPE_BOOLCPP, this->model->getLight()->getTypeZSpot(), "group='Light Type' label='Spot' opened=true help='Turn On/Off the spot light.' ");
 
 	//-- Spotlight
-	TwAddVarRW(this->lightPropertiesBar, "SpotVector", TW_TYPE_DIR3F, this->model->getMaterialLight()->getDirection(), " group='Spotlight' opened=true label='Direction' help='Change the light direction.'");
-	TwAddVarRW(this->lightPropertiesBar, "SpotExp", TW_TYPE_FLOAT, this->model->getMaterialLight()->getSpotExp(), " min=0.0001 max=20.0 step=0.0001 group='Spotlight' label='Spot Exp' ");
-	TwAddVarRW(this->lightPropertiesBar, "SpotCosCutOff", TW_TYPE_FLOAT, this->model->getMaterialLight()->getSpotCosCutOff(), " min=0.0001 max=20.0 step=0.0001 group='Spotlight' opened=true label='Cut Off' help='Change the light Cut Off factor.'");
-
+	TwAddVarRW(this->lightPropertiesBar, "SpotVector", TW_TYPE_DIR3F, this->model->getLight()->getDirection(), " group='Spotlight' opened=true label='Direction' help='Change the light direction.'");
+	TwAddVarRW(this->lightPropertiesBar, "SpotExp", TW_TYPE_FLOAT, this->model->getLight()->getSpotExp(), " min=0.01 max=20.0 step=0.0001 group='Spotlight' label='Spot Exp' ");
+	TwAddVarRW(this->lightPropertiesBar, "SpotCosCutOff", TW_TYPE_FLOAT, this->model->getLight()->getSpotCosCutOff(), " min=-1.0 max1.0 step=0.01 group='Spotlight' opened=true label='Inner Cosine' help='Change the light Cut Off factor.'");
+	TwAddVarRW(this->lightPropertiesBar, "SpotCosOuterCutOff", TW_TYPE_FLOAT, this->model->getLight()->getSpotCosOuterCutOff(), " min=-1.0 max1.0 step=0.01 group='Spotlight' opened=true label='Outer Cosine' help='Change the light Outer Cut Off factor.'");
 
 	//-- Separator
 	TwAddSeparator(this->lightPropertiesBar, "OptionsSeparator[4]", "");
@@ -245,21 +269,32 @@ void SideBar::bindLight() {
 }
 
 void SideBar::bindLightWithModel(){
-	this->model->getTransformation()->setTraslationMatrix( *(this->model->getMaterialLight()->getPosition()) );
+	this->model->getTransformation()->setTraslationMatrix( *(this->model->getLight()->getPosition()) );
+}
+
+void SideBar::recalculateLight(){
+	if (*(this->model->getIsNormalMapped()))
+		*(this->model->getIsParallaxMapped()) = false;
+
+	if (*(this->model->getIsParallaxMapped()))
+		*(this->model->getIsNormalMapped()) = false;
 }
 
 
 void SideBar::update() {
 	//-- Select view to be rendered
 	this->clear();
-	if (this->showType == 0) this->principalView();
-	else if (this->showType == 1) {
+	if (this->showType == 0) {
+		this->principalView();
+		this->updatePrincipal();
+	}else if (this->showType == 1) {
 		this->modelView();
 		this->recalculateTransformationMatrices();
 	}
 	else if (this->showType == 2) {
 		this->bindLightWithModel();
 		this->lightView();
+		this->recalculateLight();
 	}
 
 	//-- Update Screen
@@ -330,6 +365,10 @@ void SideBar::activeLightsCall(){
 
 void SideBar::animateCall(){
 	this->Send("Animate", NULL);
+}
+
+void SideBar::updatePrincipal(){
+	this->Send("updateSetShadowMap", this->showShadowMap);
 }
 
 

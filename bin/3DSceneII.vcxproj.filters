@@ -126,6 +126,9 @@
     <ClInclude Include="..\src\headers\FrameBuffer.h">
       <Filter>Render Interface\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\headers\RenderFacade.h">
+      <Filter>Render Interface\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\cpp\Main.cpp">
@@ -201,6 +204,9 @@
       <Filter>Model\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\cpp\FrameBuffer.cpp">
+      <Filter>Render Interface\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpp\RenderFacade.cpp">
       <Filter>Render Interface\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

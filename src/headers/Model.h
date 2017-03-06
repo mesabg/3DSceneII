@@ -63,9 +63,16 @@ protected:
 
 	//--Is reflected
 	bool isReflected;
+	bool isRefracted;
+	float refractedIndex;
+
+	//--
+	bool isNormalMappedTextured;
+	bool isParallaxMappedTextured;
+	float parallaxMapHeight;
 
 	//-- Light material values
-	Light* material;
+	Light* light;
 	MaterialProperties* materialProperties;
 	GLuint ShadowMapId;
 	glm::mat4 DepthBiasMVP;
@@ -92,7 +99,7 @@ public:
 	Transformation* getTransformation();
 	BoundingBox* getBoundingBox();
 	Texture* getTexture();
-	Light* getMaterialLight();
+	Light* getLight();
 	MaterialProperties* getMaterialProperties();
 	GLuint getGLVBO_dir();
 	GLuint getGLVBO_indexes_dir();
@@ -108,6 +115,12 @@ public:
 	bool* getLightningTypeX_frag();
 	bool* getLightningTypeY_vert();
 	Animation* getAnimation();
+	bool* getIsReflected();
+	bool* getIsRefracted();
+	bool* getIsNormalMapped();
+	bool* getIsParallaxMapped();
+	float* getParallaxMapHeight();
+	float* getRefractedIndex();
 
 	//-- Setters
 	void setTransformation(Transformation* transformation);
@@ -120,14 +133,18 @@ public:
 	void isReflect(bool isReflected);
 	void setShadowMapId(const GLuint ShadowMapId);
 	void setDepthBiasMVP(const glm::mat4 DepthBiasMVP);
+	void setIsReflected(bool ref);
+	void setIsRefracted(bool ref);
 
 	//-- Inherit
 	void Inherit(Model* model);
 
 	//-- Functions
 	void initGLDataBinding();
-	bool isPointed(vec3 ray);
+	bool isPointed(vec3 camera_position, vec3 ray);
 	void roundIt();
+	void bind(CGLSLProgram* shader);
+	void render(CGLSLProgram* shader);
 };
 
 

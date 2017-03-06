@@ -11,6 +11,7 @@ out vec3 o_toLight;
 out vec3 o_toCamera;
 out vec2 o_textureCoord;
 out float dist;
+out mat3 TBN;
 
 //-- parameters of the light
 struct Light{
@@ -61,11 +62,7 @@ void main(void){
     vec3 normal = o_normal;
     vec3 tangent = normalize((u_model_matrix * vec4(i_tangent, 0.0)).xyz);
     vec3 bitangent = normalize(cross(normal, tangent));
-    mat3 TBN = mat3(
-        tangent.x, bitangent.x, normal.x,
-        tangent.y, bitangent.y, normal.y,
-        tangent.z, bitangent.z, normal.z
-    );
+	TBN = transpose(mat3(tangent, bitangent, normal));
 
 	//-- direction to light
 	vec3 VP;

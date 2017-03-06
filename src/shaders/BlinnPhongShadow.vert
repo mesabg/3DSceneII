@@ -6,6 +6,7 @@ in layout(location=1) vec2 i_texture;
 in layout(location=2) vec3 i_normal;
 in layout(location=3) vec3 i_tangent;
 
+out vec3 o_position;
 out vec3 o_normal;
 out vec3 o_toLight;
 out vec3 o_toCamera;
@@ -55,7 +56,7 @@ uniform int u_textureIsActive;
 
 void main(void){
 	vec4 worldPosition = u_model_matrix * vec4(i_position, 1.0);
-
+	o_position = worldPosition.xyz;
 	//-- normal in world space
 	o_normal =  vec3( normalize(  u_model_matrix * vec4(i_normal, 0.0)) );
 

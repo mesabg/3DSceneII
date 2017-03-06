@@ -143,6 +143,7 @@
     <ClInclude Include="..\src\headers\Player.h" />
     <ClInclude Include="..\src\headers\Projection.h" />
     <ClInclude Include="..\src\headers\Reader.h" />
+    <ClInclude Include="..\src\headers\RenderFacade.h" />
     <ClInclude Include="..\src\headers\RenderInterface.h" />
     <ClInclude Include="..\src\headers\Routes.h" />
     <ClInclude Include="..\src\headers\SideBar.h" />
@@ -170,6 +171,7 @@
     <ClCompile Include="..\src\cpp\Player.cpp" />
     <ClCompile Include="..\src\cpp\Projection.cpp" />
     <ClCompile Include="..\src\cpp\Reader.cpp" />
+    <ClCompile Include="..\src\cpp\RenderFacade.cpp" />
     <ClCompile Include="..\src\cpp\RenderInterface.cpp" />
     <ClCompile Include="..\src\cpp\Routes.cpp" />
     <ClCompile Include="..\src\cpp\SideBar.cpp" />

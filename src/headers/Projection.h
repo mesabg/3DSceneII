@@ -2,8 +2,12 @@
 #ifndef __PROJECTION_H__
 #define __PROJECTION_H__
 
+//-- Global Includes
 #include <glm\glm\glm.hpp>
 #include <glm\glm\gtx\transform.hpp>
+
+//-- Class Includes
+#include <CGLSLProgram.h>
 
 using glm::mat4;
 using glm::vec3;
@@ -44,6 +48,9 @@ public:
 	void addNearAndFar(float near, float far);
 	void addNear(float near);
 	void addFar(float far);
+
+	//-- Other General Functions
+	void bind(CGLSLProgram* shader);
 };
 
 #endif

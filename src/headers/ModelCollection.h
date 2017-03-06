@@ -40,6 +40,7 @@ public:
 	//-- Methods
 	void render(Projection* projection, Camera* camera, vector<Light*>* lights, CGLSLProgram* shader);
 	void render(Projection* projection, Camera* camera, vector<Light*>* lights, map<string, CGLSLProgram*> *shaders, vector<string> position);
+	void render(Projection* projection, Camera* camera, vector<Light*>* lights, map<string, CGLSLProgram*> *shaders, vector<string> position, GLuint cubeTex);
 	void low_render(glm::mat4 depthMVP, CGLSLProgram* shader);
 	void initVBOs();
 	void setSkyBox(SkyBox* skybox);

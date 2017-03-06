@@ -11,6 +11,7 @@
 #include <Player.h>
 #include <ModelCollection.h>
 #include <FrameBuffer.h>
+#include <RenderFacade.h>
 
 extern unsigned int amountOfEntities;
 extern unsigned int amountOfLights;
@@ -42,6 +43,10 @@ private:
 	GLuint fboId, rboId;
 	GLuint textureId;
 	bool isDonePrint = false;
+	bool showShadowMap = true;
+
+	//-- Render Facade
+	RenderFacade* renderFacade;
 
 	//-- Button Click variables
 	bool clicked;
@@ -64,6 +69,7 @@ private:
 	Stage(RenderController* renderController);
 	~Stage();
 	void backRender(Camera* cam, Projection* proj);
+	void backCubeDepthMapRender(Camera* cam, Projection* proj);
 	
 public:
 	void frontRender();
@@ -86,6 +92,7 @@ public:
 
 	//-- Build Dynamic CubeMap
 	void buildDynamicCubeMap(const int entityID);
+	void buildDynamicCubeDepthMap(int lightID = 0);
 
 	//-- Build Shadow Map
 	void buildShadowMap();

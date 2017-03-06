@@ -2,7 +2,11 @@
 #ifndef __LIGHT_H__
 #define __LIGHT_H__
 
+//-- Global Includes
 #include <glm\glm\glm.hpp>
+
+//-- Class Includes
+#include <CGLSLProgram.h>
 
 using glm::vec3;
 using glm::tvec3;
@@ -19,6 +23,7 @@ private:
 	bool isActive;
 	float spotExp;
 	float spotCosCutOff;
+	float spotCosOuterCutOff;
 
 public:
 	Light();
@@ -45,6 +50,7 @@ public:
 	bool* active();
 	float* getSpotExp();
 	float* getSpotCosCutOff();
+	float* getSpotCosOuterCutOff();
 
 	//-- Setters
 	void setPosition(vec3 position);
@@ -56,9 +62,20 @@ public:
 	void setDirection(vec3 direction);
 	void setAttenuation(vec3 attenuation);
 	void setSpotCosCutOff(float spotCosCutOff);
+	void setSpotCosOuterCutOff(float spotCosOuterCutOff);
 
 	//-- Adders
 	void addPosition(vec3 position);
+
+	//-- Other General Functions
+	/// <summary>
+	/// Binds the light to the actual shader program.
+	/// </summary>
+	/// <param name="shader">Shader Program to use.</param>
+	/// <param name="mode">If false, light will be bind it as a global light. If true light will be bind it as a material light. Default "false".</param>
+	/// <param name="index">Index to use when it is a global light. Default "0".</param>
+	/// <returns>nothing</returns>
+	void bind(CGLSLProgram* shader, bool mode = false, int index = 0);
 };
 
 #endif

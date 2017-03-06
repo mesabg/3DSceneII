@@ -99,3 +99,9 @@ void Projection::addFar(float far) {
 	this->far = far;
 	this->refresh();
 }
+
+void Projection::bind(CGLSLProgram * shader){
+	//shader->enable();
+	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "u_projection_matrix"), 1, GL_FALSE, &(this->getMatrix())[0][0]);
+	//shader->disable();
+}

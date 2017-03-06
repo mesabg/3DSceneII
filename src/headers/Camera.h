@@ -11,6 +11,7 @@
 
 //-- Class Includes
 #include <Transformation.h>
+#include <CGLSLProgram.h>
 
 using glm::mat4;
 using glm::vec3;
@@ -72,6 +73,9 @@ public:
 	void calculateZoom(int scroll);
 	void calculatePitch(int button, int action, int x, int y);
 	void calculateAngleAroundPlayer(int button, int action, int x, int y);
+
+	//-- Other general functions
+	void bind(CGLSLProgram* shader);
 };
 
 #endif

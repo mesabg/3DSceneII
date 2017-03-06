@@ -72,6 +72,12 @@ void ConcreteRenderController::Send(string message, void* data, RenderColleague*
 
 	if (message == "texId" && renderColleague == this->stage)
 		this->idTex = *((GLuint*)(data));
+
+	if (message == "showShadowMap" && renderColleague == this->stage)
+		this->sideBar->Notify(message, data);
+
+	if (message == "updateSetShadowMap" && renderColleague == this->sideBar)
+		this->stage->Notify(message, data);
 }
 
 void ConcreteRenderController::render() {

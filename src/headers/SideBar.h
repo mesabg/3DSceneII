@@ -36,6 +36,8 @@ private:
 
 	//-- Variables
 	unsigned int showType;
+	bool* showShadowMap;
+
 
 	//-- Show types
 	void clear();
@@ -68,6 +70,7 @@ public:
 	void bindModel();
 	void bindLight();
 	void bindLightWithModel();
+	void recalculateLight();
 	void update();
 
 	//-- Callbacks
@@ -83,6 +86,7 @@ public:
 	void selectPerVertexLightningCall();
 	void activeLightsCall();
 	void animateCall();
+	void updatePrincipal();
 };
 
 //-- Tweakbar Callbacks

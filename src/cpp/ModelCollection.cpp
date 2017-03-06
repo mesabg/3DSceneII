@@ -41,6 +41,21 @@ void ModelCollection::render(Projection * projection, Camera * camera, vector<Li
 	}
 }
 
+void ModelCollection::render(Projection * projection, Camera * camera, vector<Light*>* lights, map<string, CGLSLProgram*>* shaders, vector<string> position, GLuint cubeTex){
+	unsigned int index = 0;
+	for (Model* model : this->entities) {
+		model->setShader(shaders->at(position[index]));
+		shaders->at(position[index])->enable();
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, cubeTex);
+		glUniform1i(shaders->at(position[index])->getLocation("cube_shadow"), 5);
+		
+		model->render(projection, camera, lights);
+		shaders->at(position[index])->disable();
+		index++;
+	}
+}
+
 void ModelCollection::low_render(glm::mat4 depthMVP, CGLSLProgram * shader){
 	for (Model* model : this->entities) {
 		model->setShader(shader);

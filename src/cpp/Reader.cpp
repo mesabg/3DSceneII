@@ -82,9 +82,9 @@ void Reader::processMaterial(aiMaterial * material){
 		material->Get(AI_MATKEY_SHININESS, shininess);
 
 		//-- Set material properties
-		this->material->setAmbient(glm::vec3(ambient.r, ambient.g, ambient.b));
-		this->material->setDiffuse(glm::vec3(diffuse.r, diffuse.g, diffuse.b));
-		this->material->setSpecular(glm::vec3(specular.r, specular.g, specular.b));
+		this->light->setAmbient(glm::vec3(ambient.r, ambient.g, ambient.b));
+		this->light->setDiffuse(glm::vec3(diffuse.r, diffuse.g, diffuse.b));
+		this->light->setSpecular(glm::vec3(specular.r, specular.g, specular.b));
 		this->materialProperties->setShininess(shininess);
 	}
 }
@@ -206,6 +206,7 @@ Reader::Reader(Routes* routes) :Model(routes) {
 	this->processNode(scene->mRootNode, scene);
 	this->roundIt();
 	this->boundingBox->setBorder(minVec, maxVec);
+	this->boundingBox->recalculate();
 }
 
 Reader::~Reader() {

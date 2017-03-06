@@ -90,19 +90,19 @@ void Model::bindData(Projection* projection, Camera* camera, vector<Light*> *glo
 	glUniformMatrix4fv(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_model_matrix"), 1, GL_FALSE, &(this->transformation->getTransformMatrix())[0][0]);
 
 	glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.ambient"),
-		this->material->getAmbient()->r, 
-		this->material->getAmbient()->g, 
-		this->material->getAmbient()->b);
+		this->light->getAmbient()->r, 
+		this->light->getAmbient()->g,
+		this->light->getAmbient()->b);
 
 	glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.diffuse"),
-		this->material->getDiffuse()->r,
-		this->material->getDiffuse()->g,
-		this->material->getDiffuse()->b);
+		this->light->getDiffuse()->r,
+		this->light->getDiffuse()->g,
+		this->light->getDiffuse()->b);
 
 	glUniform3f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.specular"),
-		this->material->getSpecular()->r,
-		this->material->getSpecular()->g,
-		this->material->getSpecular()->b);
+		this->light->getSpecular()->r,
+		this->light->getSpecular()->g,
+		this->light->getSpecular()->b);
 
 	glUniform1f(glGetUniformLocation(this->shaderProgram->getProgramID(), "u_material.shininess"),
 		*(this->materialProperties->getShininess()));
@@ -185,8 +185,9 @@ Model::Model() {
 	this->transformation = new Transformation();
 
 	/*Init Material Colors*/
-	this->material = new Light();
+	this->light = new Light();
 	this->materialProperties = new MaterialProperties(0.5f, 0.5f, 0.5f, 0.5f);
+	this->isNormalMappedTextured = false;
 }
 
 Model::Model(Routes* routes) {
@@ -203,7 +204,7 @@ Model::Model(Routes* routes) {
 	this->boundingBox = new BoundingBox();
 
 	//-- Init Material Colors
-	this->material = NULL;
+	this->light = NULL;
 
 	this->skyboxReference = NULL;
 
@@ -212,6 +213,10 @@ Model::Model(Routes* routes) {
 	this->shading = vec4(true, false, false, false);
 	this->lightningType = vec2(true, false);
 	this->animation = NULL;
+	this->isNormalMappedTextured = false;
+	this->isParallaxMappedTextured = false;
+	this->refractedIndex = 1.0f / 1.33f;
+	this->parallaxMapHeight = 5.0f;
 }
 
 Model::~Model() {
@@ -278,8 +283,8 @@ Texture * Model::getTexture() {
 	return this->texture;
 }
 
-Light * Model::getMaterialLight(){
-	return this->material;
+Light * Model::getLight(){
+	return this->light;
 }
 
 MaterialProperties * Model::getMaterialProperties(){
@@ -342,6 +347,30 @@ Animation * Model::getAnimation(){
 	return this->animation;
 }
 
+bool * Model::getIsReflected(){
+	return &this->isReflected;
+}
+
+bool * Model::getIsRefracted(){
+	return &this->isRefracted;
+}
+
+bool * Model::getIsNormalMapped(){
+	return &this->isNormalMappedTextured;
+}
+
+bool * Model::getIsParallaxMapped(){
+	return &this->isParallaxMappedTextured;
+}
+
+float * Model::getParallaxMapHeight(){
+	return &this->parallaxMapHeight;
+}
+
+float * Model::getRefractedIndex(){
+	return &this->refractedIndex;
+}
+
 void Model::setTransformation(Transformation * transformation) {
 	this->transformation = transformation;
 }
@@ -359,7 +388,7 @@ void Model::setMaterialProperties(MaterialProperties * materialProperties){
 }
 
 void Model::setLight(Light * light){
-	this->material = light;
+	this->light = light;
 }
 
 void Model::setShader(CGLSLProgram * shader){
@@ -380,6 +409,14 @@ void Model::setShadowMapId(const GLuint ShadowMapId){
 
 void Model::setDepthBiasMVP(const glm::mat4 DepthBiasMVP){
 	this->DepthBiasMVP = DepthBiasMVP;
+}
+
+void Model::setIsReflected(bool ref){
+	this->isReflected = ref;
+}
+
+void Model::setIsRefracted(bool ref){
+	this->isRefracted = ref;
 }
 
 void Model::Inherit(Model * model) {
@@ -424,8 +461,9 @@ void Model::initGLDataBinding() {
 
 	//-- Read Texture
 	this->texture = new Texture(this->routes->texture);
-	if (this->routes->isNormalMapped)
+	if (this->routes->isNormalMapped) 
 		this->normalTexture = new Texture(this->routes->normalTexture);
+	this->isNormalMappedTextured = this->routes->isNormalMapped;
 
 	//-- Enable Backface Culling and Z Buffer
 	glEnable(GL_DEPTH_TEST);
@@ -439,11 +477,10 @@ void Model::initGLDataBinding() {
 	this->glVBO_indexes.~vector();
 }
 
-bool Model::isPointed(vec3 ray){
+bool Model::isPointed(vec3 camera_position, vec3 ray){
+	vec3 direction = camera_position*ray;
 	vec3 parametricForm = vec3();
-	//-- return
-	//this->boundingBox->checkIntersecion();
-	return false;
+	return this->boundingBox->checkIntersection(ray);
 }
 
 void Model::roundIt(){
@@ -467,6 +504,110 @@ void Model::roundIt(){
 	this->minVec.x = (this->minVec.x - centro.x) / 2.0f;
 	this->minVec.y = (this->minVec.y - centro.y) / 2.0f;
 	this->minVec.z = (this->minVec.z - centro.z) / 2.0f;
+}
+
+void Model::bind(CGLSLProgram * shader){
+	//shader->enable();
+	this->light->bind(shader, true);
+	glUniform1f(glGetUniformLocation(shader->getProgramID(), "u_material.shininess"),
+		(GLfloat)*(this->materialProperties->getShininess()));
+
+	glUniform1f(glGetUniformLocation(shader->getProgramID(), "u_material.roughness"),
+		(GLfloat)*(this->materialProperties->getRoughness()));
+
+	glUniform1f(glGetUniformLocation(shader->getProgramID(), "u_material.fresnel"),
+		(GLfloat)*(this->materialProperties->getFresnel()));
+
+	glUniform1f(glGetUniformLocation(shader->getProgramID(), "u_material.albedo"),
+		(GLfloat)*(this->materialProperties->getAlbedo()));
+
+	glUniformMatrix4fv(
+		glGetUniformLocation(shader->getProgramID(), "u_model_matrix"), 1, GL_FALSE, &(this->transformation->getTransformMatrix())[0][0]);
+
+	glUniformMatrix4fv(
+		glGetUniformLocation(shader->getProgramID(), "u_depth_biasMVP"), 1, GL_FALSE, &(this->DepthBiasMVP)[0][0]);
+
+	if (this->texture)
+		glUniform1i(
+			glGetUniformLocation(shader->getProgramID(), "u_texture_state"),
+			(GLint)*(this->texture->isActive()));
+
+	glUniform1i(glGetUniformLocation(shader->getProgramID(), "u_is_reflected"),
+		(GLint)(this->isReflected));
+
+	glUniform1i(glGetUniformLocation(shader->getProgramID(), "u_is_refracted"),
+		(GLint)(this->isRefracted));
+
+	glUniform1f(glGetUniformLocation(shader->getProgramID(), "u_refracted_index"),
+		(GLfloat)(this->refractedIndex));
+
+	//-- Normal mapping factors
+	glUniform1i(glGetUniformLocation(shader->getProgramID(), "u_normal_mapped"),
+		(GLint)(this->routes->isNormalMapped && this->isNormalMappedTextured));
+
+	glUniform1i(glGetUniformLocation(shader->getProgramID(), "u_parallax_mapped"),
+		(GLint)(this->routes->isNormalMapped && this->isParallaxMappedTextured));
+
+	glUniform1f(glGetUniformLocation(shader->getProgramID(), "u_parallax_factor"),
+		(GLfloat)(this->parallaxMapHeight));
+
+
+	//-- Bind Textures
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, this->texture->getID());
+	glUniform1i(glGetUniformLocation(shader->getProgramID(), "u_texture"), 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->getCubeMapTexture());
+	glUniform1i(glGetUniformLocation(shader->getProgramID(), "u_cube_map"), 1);
+	
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, this->ShadowMapId);
+	glUniform1i(glGetUniformLocation(shader->getProgramID(), "u_shadow_map"), 2);
+
+	//-- Normal Mapping Texture
+	if (this->routes->isNormalMapped) {
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, this->normalTexture->getID());
+		glUniform1i(glGetUniformLocation(shader->getProgramID(), "u_normal_texture"), 3);
+	}
+	//shader->disable();
+}
+
+void Model::render(CGLSLProgram * shader){
+	//shader->enable();
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	if (this->animation) this->animation->animate();
+	this->boundingBox->move(this->transformation->getTransformMatrix());
+	
+	//-- Drawing Elements
+	//-- VBO Data
+	glBindBuffer(GL_ARRAY_BUFFER, this->glVBO_dir);
+	//-- Vertex 
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), 0);
+	//-- Normals								
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	//-- Texture Coord								
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	//-- Tangents								
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (void*)(9 * sizeof(GLfloat)));
+
+	//-- Drawing
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->glVBO_indexes_dir);
+
+	glDrawElements(GL_TRIANGLES, this->glVBO_indexes_size, GL_UNSIGNED_INT, (void*)0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(0);
+
+	//shader->disable();
 }
 
 void split(const std::string &s, char delim, std::vector<std::string> &elems) {

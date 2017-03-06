@@ -161,6 +161,17 @@ void Camera::calculateAngleAroundPlayer(int button, int action, int x, int y){
 		this->angleAroundPlayer -= glm::radians((float)x) * 0.1f;
 }
 
+void Camera::bind(CGLSLProgram * shader){
+	//shader->enable();
+	glUniform3f(
+		glGetUniformLocation(shader->getProgramID(), "u_camera_position"),
+		(GLfloat)position.x,
+		(GLfloat)position.y,
+		(GLfloat)position.z);
+	glUniformMatrix4fv(glGetUniformLocation(shader->getProgramID(), "u_view_matrix"), 1, GL_FALSE, &(this->getMatrix())[0][0]);
+	//shader->disable();
+}
+
 void Camera::move(){
 	this->calculateCameraPossition(this->calculateHorizontalDistance(), this->calculateVerticalDistance());
 	this->yaw = 180.0f - (this->player->getRotationY() - this->angleAroundPlayer);
