@@ -58,6 +58,7 @@ out vec2 o_texture_coord;
 out vec4 o_shadow_coord;
 out vec3 reflectedVector;
 out vec3 refractedVector;
+out mat3 TBN;
 
 //-- Constant in variables
 uniform Light u_light[NLIGHTS];
@@ -83,7 +84,7 @@ void main(void){
     vec3 normal = o_normal;
     vec3 tangent = normalize((u_model_matrix * vec4(i_tangent, 0.0)).xyz);
     vec3 bitangent = normalize(cross(normal, tangent));
-	mat3 TBN = transpose(mat3(tangent, bitangent, normal));
+	TBN = transpose(mat3(tangent, bitangent, normal));
 
     //-- Position in tangent space
 	o_position = worldPosition.xyz;

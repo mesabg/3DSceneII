@@ -52,6 +52,7 @@ in vec2 o_texture_coord;
 in vec4 o_shadow_coord;
 in vec3 reflectedVector;
 in vec3 refractedVector;
+in mat3 TBN;
 
 //-- Constant in variables
 uniform Light u_light[NLIGHTS];
@@ -96,7 +97,7 @@ float directionalShadowCalculation(in sampler2D shadow_map, in vec4 shadow_coord
 	float shadow = 1.0;
 	for (int i=0;i<4;i++)
         if ( texture( shadow_map, shadow_coords.xy + poissonDisk[i]/700.0 ).z  <  shadow_coords.z-bias )
-            shadow-=0.2;
+            shadow-=0.15;
     return shadow;
 }
 
@@ -152,11 +153,12 @@ vec3 BlinnPhongPoint(in vec3 N, in vec3 L, in vec3 V, in Light light, in Attenua
     return color;
 }
 
-vec3 BlinnPhongSpot(in vec3 N, in vec3 L, in vec3 V, in Light light, in Attenuation attenuation, in Material material){
+vec3 BlinnPhongSpot(in vec3 N, in vec3 L, in vec3 V, in Light light, in Attenuation attenuation, in Material material, in int type){
     vec3 color = vec3(0.0); 
 
     //-- SpotLight Calculations
     vec3 spot_dir = vec3(-attenuation.direction.x, attenuation.direction.y, -attenuation.direction.z);
+    if (type == 1 || type == 2) spot_dir = TBN * spot_dir;
     float theta = dot(normalize(L), normalize(-spot_dir));
     float epsilon = (attenuation.inner_cosine - attenuation.outer_cosine);
     float intensity = clamp((theta - attenuation.outer_cosine) / epsilon, 0.0, 1.0);
@@ -165,8 +167,8 @@ vec3 BlinnPhongSpot(in vec3 N, in vec3 L, in vec3 V, in Light light, in Attenuat
         float spot_light = spot_effect / (attenuation.constant + attenuation.linear*light.dist + attenuation.quadratic*light.dist*light.dist);
         float shadow = directionalShadowCalculation(u_shadow_map, o_shadow_coord);
         color += ambientLighting(light, material);
-        color += shadow * epsilon * spot_light * diffuseLighting(N, L, light, material);
-        color += shadow * epsilon * spot_light * specularLightingBlinn(N, L, V, light, material);
+        color += shadow * spot_light * diffuseLighting(N, L, light, material);
+        color += shadow * spot_light * specularLightingBlinn(N, L, V, light, material);
     }
 
     return color;
@@ -177,7 +179,7 @@ vec4 calculateBlinnPhong(in vec3 N, in vec3 L, in vec3 V, in Light light, in Att
     if (NdotL > 0.0){
         if (u_light[index].type.x == 1) return vec4(BlinnPhongDirectional(N, L, V, light, attenuation, material), 1);
         else if (u_light[index].type.y == 1) return vec4(BlinnPhongPoint(N, L, V, light, attenuation, material), 1);
-        else if (u_light[index].type.z == 1) return vec4(BlinnPhongSpot(N, L, V, light, attenuation, material), 1);
+        else if (u_light[index].type.z == 1) return vec4(BlinnPhongSpot(N, L, V, light, attenuation, material, u_parallax_mapped + u_normal_mapped), 1);
     }
     return vec4(0, 0, 0, 1);
 } 
@@ -226,20 +228,20 @@ void main(void){
 
     vec4 reflectedColor;
 	vec4 refractedColor;
-
-    if (u_is_reflected==1 && u_is_refracted==1){
-        reflectedColor = texture(u_cube_map, reflectedVector);
-        refractedColor = texture(u_cube_map, refractedVector);
-        vec4 enviroColor = mix(reflectedColor, refractedColor, 0.5);
-	    resultingColor = mix(resultingColor, enviroColor, 1.0);
-        //resultingColor = enviroColor;
-    }else if (u_is_reflected==1){
-        reflectedColor = texture(u_cube_map, reflectedVector);
-        resultingColor = mix(resultingColor, reflectedColor, 0.5);
-        //resultingColor = reflectedColor;
-    }else if (u_is_refracted==1){
-        refractedColor = texture(u_cube_map, refractedVector);
-        resultingColor = mix(resultingColor, refractedColor, 0.5);
-        //resultingColor = refractedColor;
-    } 
+    if (colored > 0.0)
+        if (u_is_reflected==1 && u_is_refracted==1){
+            reflectedColor = texture(u_cube_map, reflectedVector);
+            refractedColor = texture(u_cube_map, refractedVector);
+            vec4 enviroColor = mix(reflectedColor, refractedColor, 0.5);
+            resultingColor = mix(resultingColor, enviroColor, 1.0);
+            //resultingColor = enviroColor;
+        }else if (u_is_reflected==1){
+            reflectedColor = texture(u_cube_map, reflectedVector);
+            resultingColor = mix(resultingColor, reflectedColor, 0.5);
+            //resultingColor = reflectedColor;
+        }else if (u_is_refracted==1){
+            refractedColor = texture(u_cube_map, refractedVector);
+            resultingColor = mix(resultingColor, refractedColor, 0.5);
+            //resultingColor = refractedColor;
+        } 
 }
